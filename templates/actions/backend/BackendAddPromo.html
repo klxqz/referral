@@ -1,0 +1,54 @@
+<form id="form-add-promo" action="?plugin=referral&action=savePromo" method="POST">
+    {$wa->csrf()}
+    <input id="promo_id" type="hidden" name="promo[id]" value="{if isset($promo.id)}{$promo.id}{/if}" />
+
+    <div class="field">
+        <div class="name">Доступен</div>
+        <div class="value">
+            <select name="promo[enabled]">
+                <option {if $promo.enabled==1}selected="selected"{/if} value="1">Да</option>
+                <option {if $promo.enabled==0}selected="selected"{/if} value="0">Нет</option>
+            </select>
+
+        </div>
+    </div>
+    <div class="field">
+        <div class="name">Название слайдера</div>
+        <div class="value"><input type="text" name="promo[name]" value="{$promo.name|escape}" class="long bold" /></div>
+    </div>
+    <div class="field">
+        <div class="name">Ссылка</div>
+        <div class="value"><input type="text" name="promo[url]" value="{$promo.url|escape}" class="long bold" /></div>
+    </div>
+
+    <div class="field">
+        <div class="name">
+            Изображение
+        </div>
+        <div class="value">
+            <div class="preview">
+                {if isset($promo.img)}
+                <img src="{$wa_url}wa-data/public/shop/plugins/referral/promos/{$promo.img}"/>
+                {/if}
+            </div>
+
+
+
+            <div class="block" style="overflow: hidden">
+                <a class="fileinput-button" href="javascript:void(0);">
+                    <i class="icon16 upload"></i>Выберите изображение<input class="fileupload" type="file" name="img"><span class="promo-result"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="value submit">
+            <input type="submit" value="Сохранить" class="button green">
+            <span style="display:none" id="form-result">
+
+            </span>
+        </div>
+    </div>
+</form>
+

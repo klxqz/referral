@@ -1,0 +1,39 @@
+{literal}
+<style type="text/css">
+    .noveltiesproducts ul{padding: 0px;}
+    .noveltiesproducts_title{text-align: center;font-weight: bold;margin: 10px 0px;}
+    .noveltiesproducts ul li{list-style: none;margin-bottom: 20px;}
+    .noveltiesproducts_img{text-align: center;}
+    .noveltiesproducts_name{text-align: center;}
+    .product-price{text-align: center;}
+    .noveltiesproducts_link{text-align: center;}
+</style>
+{/literal}
+{if $novelties_products}
+    <div class="noveltiesproducts">
+    <div class="noveltiesproducts_title">Новинки</div>
+    <ul>
+    {foreach from=$novelties_products item=product}
+        <li>
+        <div class="noveltiesproducts_img">
+        <a href="{$wa->shop->productUrl($product)}">
+        {$wa->shop->productImgHtml($product, '100x100', ['itemprop' => 'image', 'alt' => $product.name])}  
+        </a>
+        </div>
+        <div class="noveltiesproducts_name">
+        <a href="{$product.frontend_url}">
+            <span itemprop="name">{$product.name|truncate:60}</span>
+        </a>
+        </div>
+        <div class="product-price">
+        {if $product.compare_price>$product.price}<span class="compare-at-price nowrap">{shop_currency($product.compare_price)}</span>{/if}
+        <span class="price nowrap" itemprop="price">{shop_currency($product.price)}</span>
+        </div>
+        </li>
+    {/foreach}
+    </ul>
+    </div>
+    <div class="noveltiesproducts_link">
+        <a  href="{$wa->getUrl('shop/frontend/novelties')}">Все товары</a>
+    </div>
+{/if}

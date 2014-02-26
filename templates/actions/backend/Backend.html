@@ -1,0 +1,31 @@
+<script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.ui.widget.js"></script>
+<script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.iframe-transport.js"></script>
+<script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.fileupload.js"></script>
+
+<div class="sidebar left200px s-inner-sidebar" id="slider-sidebar">
+    
+    <div class="block">
+        <ul class="menu-v with-icons">
+            
+            <li>
+                <a class="s-product-list" href="#/">
+                    <i class="icon16 folders"></i>Промо материалы
+                </a>
+            </li>
+            
+            <li>
+                <a href="#/addPromo/"><i class="icon16 add"></i>Добавить</a>
+            </li>
+        </ul>
+    </div> 
+</div>
+
+<div class="content left200px blank" id="slider-content">
+    <div class="block triple-padded"><i class="icon16 loading"></i>[`Loading...`]</div>
+</div>
+
+
+<script type="text/javascript" src="{$wa_app_static_url}plugins/referral/js/referral.js?{$wa->version()}"></script>
+<script>$(function() {
+    $.referral.init();
+});</script>

@@ -1,0 +1,41 @@
+{if $promos}
+<form action="?plugin=referral&action=deletePromos" class="promos-form">
+    <table id="sliders-list" class="zebra">
+        <tbody><tr class="header">
+                <th class="min-width">
+                    <input type="checkbox" class="select-all-promos">
+                </th>
+                <th>Название</th>
+                <th>Ссылка</th>
+                <th>Доступен</th>
+                <th></th>
+            </tr>
+        </tbody>
+
+        {foreach $promos as $promo}
+        <tr>
+            <td class="min-width">
+                <input class="select-promo-checkbox" type="checkbox" name="promo_ids[]" value="{$promo.id}">
+            </td>
+            <td>
+                <a href="#/addPromo/{$promo.id}/">{$promo.name|escape}</a>
+            </td>
+            <td>
+                {$promo.url|escape}
+            </td>
+            <td>{if $promo.enabled}Да{else}Нет{/if}</td>
+            
+        </tr>
+        {/foreach}
+
+
+    </table>
+</form>
+<div class="block">
+    <a class="delete-promos-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
+    <span class="del-promos-result"></span>
+</div>
+
+{else}
+Список пуст
+{/if}

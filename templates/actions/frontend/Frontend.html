@@ -1,0 +1,17 @@
+{if $promos}
+{foreach $promos as $promo}
+<div>
+    <div>
+        <a href="#/addPromo/{$promo.id}/">{$promo.name|escape}</a>
+    </div>
+    <div>
+        {if isset($promo.img)}
+        <img src="{$wa_url}wa-data/public/shop/plugins/referral/promos/{$promo.img}"/>
+        {/if}
+    </div>
+</div>
+{/foreach}
+
+{else}
+Список пуст
+{/if}
