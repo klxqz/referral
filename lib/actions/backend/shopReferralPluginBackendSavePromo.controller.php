@@ -8,11 +8,11 @@ class shopReferralPluginBackendSavePromoController extends waJsonController {
         $promo_model = new shopPromoPluginModel();
 
         $promo = $promo_model->getById($promo_post['id']);
-        
+
         $file = waRequest::file('img');
         if ($file->uploaded()) {
             $image_path = wa()->getDataPath('plugins/referral/promos/', 'shop');
-            $name = $this->uniqueName($image_path);
+            $name = $this->uniqueName($image_path, $file->extension);
             try {
                 $file->waImage()->save($image_path . $name);
                 $this->response['preview'] = wa()->getDataUrl('plugins/referral/promos/' . $name, true, 'shop');
@@ -36,7 +36,7 @@ class shopReferralPluginBackendSavePromoController extends waJsonController {
         $this->response['message'] = 'OK';
     }
 
-    protected function uniqueName($path) {
+    protected function uniqueName($path, $file_extension) {
         $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
         do {
             $name = '';
@@ -44,7 +44,7 @@ class shopReferralPluginBackendSavePromoController extends waJsonController {
                 $n = rand(0, strlen($alphabet) - 1);
                 $name .= $alphabet{$n};
             }
-            $name .= '.jpg';
+            $name .= '.' . $file_extension;
         } while (file_exists($path . $name));
 
         return $name;

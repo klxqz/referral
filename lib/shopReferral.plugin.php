@@ -18,30 +18,22 @@ class shopReferralPlugin extends shopPlugin {
     }
 
     public function frontendHead() {
-/*
-        $referral_id = waRequest::get('referral_id', 0);
-        if ($referral_id) {
+        if ($referral_id = waRequest::get('referral_id', 0) && !$this->getReferralId()) {
             $this->setReferralId($referral_id);
         }
-*/
-        
-        $contact = wa()->getUser();
-        echo $contact->get('referral_id', "default");
-        //echo $this->getReferralId();
 
-        //$session->write('referral',1);
-        //echo $session->read('referral');
-        /*
-          if (wa()->getUser()->isAuth()) {
-          $contact = wa()->getUser();
-          } else {
-          $contact = new waContact();
-          }
+        if ($coupon_code = waRequest::get('coupon')) {
+            $data = wa()->getStorage()->get('shop/checkout', array());
+            $data['coupon_code'] = $coupon_code;
+            wa()->getStorage()->set('shop/checkout', $data);
+            wa()->getStorage()->remove('shop/cart');
+        }
 
-          echo $contact->get('referral_id');
-
-
-          $contact->save(); */
+        //если пользователь быль неавторизирован, а затем авторизировался, тогда пересохраняем реферала в базу
+        if (wa()->getUser()->isAuth() && wa()->getStorage()->read('referral_id') && !wa()->getUser()->get('referral_id')) {
+            $referral_id = wa()->getStorage()->read('referral_id');
+            $this->setReferralId($referral_id);
+        }
     }
 
     protected function setReferralId($referral_id) {
@@ -56,19 +48,47 @@ class shopReferralPlugin extends shopPlugin {
     }
 
     protected function getReferralId() {
+        $referral_id = 0;
         $session = wa()->getStorage();
         if (wa()->getUser()->isAuth()) {
             $contact = wa()->getUser();
             if ($contact->get('referral_id')) {
                 $referral_id = $contact->get('referral_id');
-            } else {
-                $referral_id = $session->read('referral_id');
-                //$this->setReferralId($referral_id);
+            } elseif ($referral_id = $session->read('referral_id')) {
+                $this->setReferralId($referral_id);
             }
         } else {
             $referral_id = $session->read('referral_id');
         }
         return $referral_id;
+    }
+
+    public static function formatValue($c, $curr = null) {
+        static $currencies = null;
+        if ($currencies === null) {
+            if ($curr) {
+                $currencies = $curr;
+            } else {
+                $curm = new shopCurrencyModel();
+                $currencies = $curm->getAll('code');
+            }
+        }
+
+        if ($c['type'] == '$FS') {
+            return _w('Free shipping');
+        } else if ($c['type'] === '%') {
+            return waCurrency::format('%0', $c['value'], 'USD') . '%';
+        } else if (!empty($currencies[$c['type']])) {
+            return waCurrency::format('%0{s}', $c['value'], $c['type']);
+        } else {
+            // Coupon of unknown type. Possibly from a plugin?..
+            return '';
+        }
+    }
+
+    public static function isEnabled($c) {
+        $result = $c['limit'] === null || $c['limit'] > $c['used'];
+        return $result && ($c['expire_datetime'] === null || strtotime($c['expire_datetime']) > time());
     }
 
 }

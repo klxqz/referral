@@ -43,6 +43,22 @@
     </div>
 
     <div class="field">
+        <div class="name">
+            Купон
+        </div>
+        <div class="value">
+            <select name="promo[coupon_id]">
+                {foreach $coupons as $c}
+                <option value="{$c.id}">{$c.code} - {$c.hint}</option>
+                {/foreach}
+            </select>
+            <p class="hint"><a href="?action=orders#/coupons/'">Купоны на скидку</a></p>
+        </div>
+    </div>
+
+
+
+    <div class="field">
         <div class="value submit">
             <input type="submit" value="Сохранить" class="button green">
             <span style="display:none" id="form-result">
