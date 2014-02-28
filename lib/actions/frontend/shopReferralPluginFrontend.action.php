@@ -7,5 +7,15 @@ class shopReferralPluginFrontendAction extends shopFrontendAction {
         $promos = $promo_model->getAll();
         $this->view->assign('promos', $promos);
     }
+    
+    public static function getBreadcrumbs()
+    {
+        return array(
+            array(
+                'name' => _w('My account'),
+                'url' => wa()->getRouteUrl('/frontend/my'),
+            ),
+        );
+    }
 
 }

@@ -11,6 +11,7 @@ return array(
     'handlers' => array(
         'backend_menu' => 'backendMenu',
         'frontend_my' => 'frontendMy',
+        'frontend_head' => 'frontendHead',
     ),
 );
 //EOF
