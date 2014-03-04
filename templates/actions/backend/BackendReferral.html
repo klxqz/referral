@@ -1,0 +1,74 @@
+<style>
+    table.zebra a.referral_but{
+        margin-top: 5px;
+        display: inline-block;
+    }
+    .amount_input{
+        display: none;
+    }
+    .date_input{
+        display: none;
+    }
+    .comment_input{
+        display: none;
+    }
+    table.zebra a.cancel{
+        display: none;
+    }
+    table.zebra a.save{
+        display: none;
+    }    
+
+    i.icon16.loading{
+        display: none;
+    }
+</style>
+<h2>{$contact.name}</h2>
+{if $referral_transactions}
+<form action="?plugin=referral&action=deletePromos" class="promos-form">
+    {$wa->csrf()}
+    <table id="transactions-list" class="zebra">
+        <tbody><tr class="header">
+                <th class="min-width">
+                    <input type="checkbox" class="select-all-promos">
+                </th>
+                <th></th>
+                <th>Дата</th>
+                <th>Сумма</th>
+                <th>Комментарий</th>
+            </tr>
+        </tbody>
+
+        {foreach $referral_transactions as $transaction}
+        <tr data-transaction-id="{$transaction.id}">
+            <td class="min-width">
+                <input class="select-promo-checkbox" type="checkbox" name="promo_ids[]" value="{$transaction.id}">
+            </td>
+            <td>
+                <a class="referral_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
+                <a class="referral_but delete" href="#"><i class="icon16 delete"></i>Удалить</a>
+                <i class="icon16 loading"></i>
+                <a class="referral_but save" href="#"><i class="icon16 yes"></i>Сохранить</a>
+                <a class="referral_but cancel" href="#"><i class="icon16 no"></i>Отменить</a>
+            </td>
+            <td>
+                <div class="date_val">{$transaction.date|wa_datetime:"humandatetime"}</div>
+                <input class="date_input" type="text" value="{$transaction.date}"/>
+            </td>
+            <td>
+                <div class="amount_val">{shop_currency_html($transaction.amount)}</div>
+                <input class="amount_input" type="text" value="{shop_currency($transaction.amount,null,null,false)}" >
+            </td>
+            <td>
+                <div class="comment_val">{$transaction.comment|escape}</div>
+                <textarea class="comment_input" cols="40" rows="5">{$transaction.comment|escape}</textarea>
+            </td>
+        </tr>
+        {/foreach}
+
+
+    </table>
+</form>
+{else}
+Список пуст
+{/if}

@@ -1,0 +1,30 @@
+{if $referrals}
+<form action="?plugin=referral&action=deletePromos" class="promos-form">
+    <table id="sliders-list" class="zebra">
+        <tbody><tr class="header">
+                <th class="min-width">
+                    <input type="checkbox" class="select-all-promos">
+                </th>
+                <th>Реферал</th>
+                <th>Сумма</th>
+            </tr>
+        </tbody>
+
+        {foreach $referrals as $referral}
+        <tr>
+            <td class="min-width">
+                <input class="select-promo-checkbox" type="checkbox" name="promo_ids[]" value="{$referral.id}">
+            </td>
+            <td>
+                <a href="#/referral/{$referral.id}/">{$referral.name|escape}</a>
+            </td>
+            <td>{shop_currency_html($referral.total_amount)}</td>
+        </tr>
+        {/foreach}
+
+
+    </table>
+</form>
+{else}
+Список пуст
+{/if}

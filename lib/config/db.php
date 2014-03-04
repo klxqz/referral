@@ -17,4 +17,15 @@ return array(
             'coupon_id' => 'coupon_id',
         ),
     ),
+    'shop_referral' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'contact_id' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'date' => array('datetime', 'null' => 0),
+        'amount' => array('decimal', '15,4', 'null' => 0),
+        'comment' => array('text'),
+        ':keys' => array(
+            'PRIMARY' => array('id'),
+            'contact_id' => 'contact_id',
+        ),
+    ),
 );

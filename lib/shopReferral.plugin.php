@@ -3,7 +3,7 @@
 class shopReferralPlugin extends shopPlugin {
 
     public function backendMenu() {
-        if ($this->getSettings('status') || 1) {
+        if ($this->getSettings('status')) {
             $html = '<li ' . (waRequest::get('plugin') == $this->id ? 'class="selected"' : 'class="no-tab"') . '>
                         <a href="?plugin=referral">Партнерская программа</a>
                     </li>';
@@ -89,6 +89,34 @@ class shopReferralPlugin extends shopPlugin {
     public static function isEnabled($c) {
         $result = $c['limit'] === null || $c['limit'] > $c['used'];
         return $result && ($c['expire_datetime'] === null || strtotime($c['expire_datetime']) > time());
+    }
+
+    public function orderActionComplete($params) {
+        if ($this->getSettings('status')) {
+            $order_model = new shopOrderModel();
+            $order = $order_model->getById($params['order_id']);
+            $contact = new waContact($order['contact_id']);
+            $referral_id = $contact->get('referral_id', 'default');
+            $total = $order['total'] - $order['shipping'];
+            $amount = $this->getReferralAmount($total);
+            $def_currency = wa('shop')->getConfig()->getCurrency(true);
+            $amount = shop_currency($amount, $order['currency'], $def_currency, false);
+            $referral_model = new shopReferralPluginModel();
+            $comment = 'Начисление за заказ №' . shopHelper::encodeOrderId($params['order_id']);
+
+            $data = array(
+                'contact_id' => $referral_id,
+                'date' => waDateTime::date('Y-m-d H:i:s'),
+                'amount' => $amount,
+                'comment' => $comment,
+            );
+            $referral_model->insert($data);
+        }
+    }
+
+    public function getReferralAmount($order_total) {
+        $referral_percent = $this->getSettings('referral_percent');
+        return $order_total * $referral_percent / 100.0;
     }
 
 }

@@ -6,12 +6,13 @@ return array(
     'vendor' => '985310',
     'version' => '1.0.0',
     'img' => 'img/referral.png',
-    'shop_settings' => true,
+    'shop_settings' => false,
     'frontend' => true,
     'handlers' => array(
         'backend_menu' => 'backendMenu',
         'frontend_my' => 'frontendMy',
         'frontend_head' => 'frontendHead',
+        'order_action.complete' => 'orderActionComplete',
     ),
 );
 //EOF
