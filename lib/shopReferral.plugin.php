@@ -92,17 +92,57 @@ class shopReferralPlugin extends shopPlugin {
     }
 
     public function orderActionComplete($params) {
+        if ($this->getSettings('status') && $this->getSettings('order_hook') == 'complete') {
+            $this->orderAction($params);
+        }
+    }
+
+    public function orderActionPay($params) {
+        if ($this->getSettings('status') && $this->getSettings('order_hook') == 'pay') {
+            $this->orderAction($params);
+        }
+    }
+
+    protected function orderAction($params) {
+        $order_model = new shopOrderModel();
+        $order = $order_model->getById($params['order_id']);
+        $contact = new waContact($order['contact_id']);
+        $referral_id = $contact->get('referral_id', 'default');
+        $total = $order['total'] - $order['shipping'];
+        if ($this->getSettings('including_delivery')) {
+            $total = $order['total'];
+        } else {
+            $total = $order['total'] - $order['shipping'];
+        }
+        $amount = $this->getReferralAmount($total);
+        $def_currency = wa('shop')->getConfig()->getCurrency(true);
+        $amount = shop_currency($amount, $order['currency'], $def_currency, false);
+        $referral_model = new shopReferralPluginModel();
+        $comment = 'Начисление. Заказ №' . shopHelper::encodeOrderId($params['order_id']);
+
+        $data = array(
+            'contact_id' => $referral_id,
+            'date' => waDateTime::date('Y-m-d H:i:s'),
+            'amount' => $amount,
+            'comment' => $comment,
+            'order_id' => $params['order_id'],
+        );
+        $referral_model->insert($data);
+    }
+
+    public function orderActionRefund($params) {
         if ($this->getSettings('status')) {
             $order_model = new shopOrderModel();
             $order = $order_model->getById($params['order_id']);
+
             $contact = new waContact($order['contact_id']);
             $referral_id = $contact->get('referral_id', 'default');
-            $total = $order['total'] - $order['shipping'];
-            $amount = $this->getReferralAmount($total);
-            $def_currency = wa('shop')->getConfig()->getCurrency(true);
-            $amount = shop_currency($amount, $order['currency'], $def_currency, false);
+
             $referral_model = new shopReferralPluginModel();
-            $comment = 'Начисление за заказ №' . shopHelper::encodeOrderId($params['order_id']);
+            $transaction = $referral_model->getByField('order_id', $params['order_id']);
+            $amount = (-1) * $transaction['amount'];
+
+            $comment = 'Возврат. Заказ №' . shopHelper::encodeOrderId($params['order_id']);
 
             $data = array(
                 'contact_id' => $referral_id,

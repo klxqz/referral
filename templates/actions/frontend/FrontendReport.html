@@ -1,0 +1,57 @@
+<style>
+    #transactions-list{
+        width: 100%;
+    }
+    #transactions-list td{
+        text-align: center;
+    }
+</style>
+{if $referral_transactions}
+<table>
+    <tr>
+        <td>Баланс:</td>
+        <td>{shop_currency_html($balance)}</td>
+    </tr>
+</table>
+<form action="?plugin=referral&action=deletePromos" class="promos-form">
+    {$wa->csrf()}
+    <table id="transactions-list" class="zebra">
+        <tbody><tr class="header">
+                <th>Дата</th>
+                <th>Заказ</th>
+                <th>Дата заказа</th>
+                <th>Сумма заказа</th>
+                <th>Валюта заказа</th>
+                <th>Стоимость доставки</th>
+                <th>Размер скидки</th>
+                <th>Начисления</th>
+                <th>Комментарий</th>
+            </tr>
+        </tbody>
+
+        {foreach $referral_transactions as $transaction}
+        <tr data-transaction-id="{$transaction.id}" style="color:{if $transaction.amount>0}green{else}red{/if};">
+            <td>
+                <div class="date_val">{$transaction.date|wa_datetime:"humandatetime"}</div>
+            </td>
+            <td>{if $transaction.order_id}{shopHelper::encodeOrderId($transaction.order_id)}{/if}</td>
+            <td>{if $transaction.order_id}{$transaction.order_date|wa_datetime:"humandatetime"}{/if}</td>
+            <td>{if $transaction.order_id}{shop_currency_html($transaction.order_total,$transaction.order_currency)}{/if}</td>
+            <td>{if $transaction.order_id}{$transaction.order_currency}{/if}</td>
+            <td>{if $transaction.order_id}{shop_currency_html($transaction.order_shipping,$transaction.order_currency)}{/if}</td>
+            <td>{if $transaction.order_id}{shop_currency_html($transaction.order_discount,$transaction.order_currency)}{/if}</td>
+            <td>
+                <div class="amount_val">{shop_currency_html($transaction.amount)}</div>
+            </td>
+            <td>
+                <div class="comment_val">{$transaction.comment|escape}</div>
+            </td>
+        </tr>
+        {/foreach}
+
+
+    </table>
+</form>
+{else}
+Список пуст
+{/if}

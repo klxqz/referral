@@ -6,4 +6,5 @@
  */
 return array(
     'my/referral/' => 'frontend/',
+    'my/referral/report/' => 'frontend/report/',
 );

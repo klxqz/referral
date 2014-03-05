@@ -13,6 +13,8 @@ return array(
         'frontend_my' => 'frontendMy',
         'frontend_head' => 'frontendHead',
         'order_action.complete' => 'orderActionComplete',
+        'order_action.pay' => 'orderActionPay',
+        'order_action.refund' => 'orderActionRefund',
     ),
 );
 //EOF

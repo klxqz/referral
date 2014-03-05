@@ -16,6 +16,8 @@ class shopReferralPluginFrontendAction extends shopFrontendAction {
         }
         unset($promo);
         $this->view->assign('promos', $promos);
+        $this->view->assign('breadcrumbs', self::getBreadcrumbs());
+        $this->getResponse()->setTitle('Партнерская программа');
     }
 
     public static function getBreadcrumbs() {
