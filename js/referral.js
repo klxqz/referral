@@ -134,6 +134,7 @@
         referralAction: function(id) {
             this.load('?plugin=referral&action=referral&referral_id=' + id, function() {
                 $.referral.initReferralButtons();
+                $.referral.initAddTransactionForm();
             });
         },
         selectAllPromosInit: function() {
@@ -143,6 +144,33 @@
                 } else {
                     $('.select-promo-checkbox').removeAttr('checked');
                 }
+            });
+        },
+        initAddTransactionForm: function() {
+            
+            $('form.add-transaction-form').submit(function() {
+                $('#response-status').html('<i style="vertical-align:middle" class="icon16 loading"></i>');
+                $('#response-status').show();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    success: function(data, textStatus, jqXHR) {
+                        if (data.status == 'ok') {
+                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 yes"></i>Сохранено');
+                            $('#response-status').css('color', '#008727');
+                        } else {
+                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 no"></i>' + data.errors);
+                            $('#response-status').css('color', '#FF0000');
+                        }
+                        setTimeout(function() {
+                            $('#response-status').hide();
+                            location.reload();
+                        }, 3000);
+                    }
+                });
+                return false;
             });
         },
         initReferralButtons: function() {
@@ -232,6 +260,10 @@
                 });
                 return false;
             });
+            $('.add-transaction-but').click(function() {
+                $('.add-transaction').show();
+                return false;
+            });
 
         },
         deletePromosInit: function()
@@ -265,6 +297,13 @@
                 });
                 $.referral.fileUploadInit();
 
+            });
+        },
+        addTransactionAction: function(id) {
+            if (!id) {
+                id = '';
+            }
+            this.load('?plugin=referral&action=addTransaction&id=' + id, function() {
             });
         },
         fileUploadInit: function()

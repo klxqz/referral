@@ -1,0 +1,40 @@
+<style>
+    .add-transaction-form input[type="text"]{
+        width: 90px !important;
+    }
+</style>
+<h2>Добавить транзакцию</h2>
+<form class="add-transaction-form" action="?plugin=referral&action=addTransaction">
+    <input type="hidden" name="referral_id" value="{$referral_id}" />
+    
+    <div class="field">
+        <div class="name">
+            Сумма
+        </div>
+        <div class="value">
+            <input name="amount" type="text" value="" />
+        </div>
+    </div>
+    
+    <div class="field">
+        <div class="name">
+            Дата
+        </div>
+        <div class="value">
+            <input name="date" type="text" value="{$datenow}" />
+        </div>
+    </div>
+    
+    <div class="field">
+        <div class="name">
+            Комментарий
+        </div>
+        <div class="value">
+            <textarea name="comment"></textarea>
+        </div>
+    </div>
+
+    <input type="submit" class="button green large" value="Сохранить">
+    <span id="response-status"></span>
+
+</form>

@@ -24,6 +24,7 @@
                 <th>Валюта заказа</th>
                 <th>Стоимость доставки</th>
                 <th>Размер скидки</th>
+                <th>Товары в заказе</th>
                 <th>Начисления</th>
                 <th>Комментарий</th>
             </tr>
@@ -40,6 +41,7 @@
             <td>{if $transaction.order_id}{$transaction.order_currency}{/if}</td>
             <td>{if $transaction.order_id}{shop_currency_html($transaction.order_shipping,$transaction.order_currency)}{/if}</td>
             <td>{if $transaction.order_id}{shop_currency_html($transaction.order_discount,$transaction.order_currency)}{/if}</td>
+            <td>{if $transaction.order_id}{$transaction.products_str}{/if}</td>
             <td>
                 <div class="amount_val">{shop_currency_html($transaction.amount)}</div>
             </td>

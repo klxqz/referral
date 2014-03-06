@@ -23,6 +23,8 @@ return array(
         'date' => array('datetime', 'null' => 0),
         'amount' => array('decimal', '15,4', 'null' => 0),
         'comment' => array('text'),
+        'order_id' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'data' => array('text'),
         ':keys' => array(
             'PRIMARY' => array('id'),
             'contact_id' => 'contact_id',

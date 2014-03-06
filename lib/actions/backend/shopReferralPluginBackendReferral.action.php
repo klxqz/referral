@@ -13,6 +13,8 @@ class shopReferralPluginBackendReferralAction extends waViewAction {
         $contact = new waContact($referral_id);
         $this->view->assign('referral_transactions', $referral_transactions);
         $this->view->assign('contact', $contact);
+        $this->view->assign('referral_id', $referral_id);
+        $this->view->assign('datenow', waDateTime::date('Y-m-d H:i:s'));
     }
 
 }
