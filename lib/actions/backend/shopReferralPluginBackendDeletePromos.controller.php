@@ -4,7 +4,7 @@ class shopReferralPluginBackendDeletePromosController extends waJsonController {
 
     public function execute() {
         $promo_ids = waRequest::post('promo_ids', array());
-        $promo_model = new shopPromoPluginModel();
+        $promo_model = new shopReferralPluginPromoModel();
 
         if ($promo_ids) {
             foreach ($promo_ids as $id) {

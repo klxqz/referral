@@ -4,7 +4,7 @@ class shopReferralPluginFrontendAction extends shopFrontendAction {
 
     public function execute() {
         $coupon_model = new shopCouponModel();
-        $promo_model = new shopPromoPluginModel();
+        $promo_model = new shopReferralPluginPromoModel();
         $promos = $promo_model->getAll();
         $referral_id = wa()->getUser()->getId();
         $domain = wa()->getRouting()->getDomain(null, true);

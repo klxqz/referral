@@ -15,7 +15,7 @@ class shopReferralPluginBackendAddPromoAction extends waViewAction {
 
     public function execute() {
         $id = waRequest::get('id');
-        $promo_model = new shopPromoPluginModel();
+        $promo_model = new shopReferralPluginPromoModel();
         $promo = $promo_model->getById($id);
         if (!$promo) {
             $promo = $this->default;

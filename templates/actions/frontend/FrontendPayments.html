@@ -1,26 +1,66 @@
+<style>
+    #payments-list{
+        width: 100%;
+    }
+    #payments-list td{
+        text-align: center;
+    }
+</style>
 <h1>Выплаты</h1>
+{if $payments}
+<table id="payments-list" class="zebra">
+    <tbody><tr class="header">
+            <th>Дата</th>
+            <th>Сумма</th>
+            <th>Статус</th>
+        </tr>
+    </tbody>
+
+    {foreach $payments as $payment}
+    <tr>
+        <td>
+            <div class="date_val">{$payment.date|wa_datetime:"humandatetime"}</div>
+        </td>
+        <td>
+            {shop_currency_html($payment.amount)}
+        </td>
+        <td>
+            {if $payment.status == 'new'}
+            Новый
+            {elseif $payment.status == 'complete'}
+            Выполнен
+            {elseif $payment.status == 'cancel'}
+            Отменен
+            {/if}
+        </td>
+    </tr>
+    {/foreach}
+
+
+</table>
+{/if}
 
 <form method="POST" action="">
     <table>
         <tr>
             <td>Сумма</td>
             <td>
-                <input name="amount" />
+                <input name="payment[amount]" />
             </td>
         </tr>
         <tr>
             <td>Платежные реквизиты</td>
             <td>
-                <textarea name="data" cols="80" rows="20"></textarea>
+                <textarea name="payment[data]" cols="80" rows="20"></textarea>
             </td>
         </tr>
         <tr>
             <td></td>
             <td>
-                <input type="submit" value="Подать заявку" />
+                <input type="submit" value="Заказать выплату" />
             </td>
         </tr>
     </table>
-    
-    
+
+
 </form>

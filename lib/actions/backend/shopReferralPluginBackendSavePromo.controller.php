@@ -5,7 +5,7 @@ class shopReferralPluginBackendSavePromoController extends waJsonController {
     public function execute() {
 
         $promo_post = waRequest::post('promo');
-        $promo_model = new shopPromoPluginModel();
+        $promo_model = new shopReferralPluginPromoModel();
 
         $promo = $promo_model->getById($promo_post['id']);
 

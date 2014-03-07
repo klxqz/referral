@@ -7,7 +7,7 @@
 class shopReferralPluginBackendPromosAction extends waViewAction {
 
     public function execute() {
-        $promo_model = new shopPromoPluginModel();
+        $promo_model = new shopReferralPluginPromoModel();
         $coupon_model = new shopCouponModel();
         $curm = new shopCurrencyModel();
         $currencies = $curm->getAll('code');

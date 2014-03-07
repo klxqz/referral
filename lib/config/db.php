@@ -5,7 +5,7 @@
  * @link http://wa-plugins.ru/
  */
 return array(
-    'shop_promo' => array(
+    'shop_referral_promo' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'name' => array('varchar', 255, 'null' => 0, 'default' => ''),
         'coupon_id' => array('int', 11, 'null' => 0, 'default' => '0'),
@@ -24,7 +24,18 @@ return array(
         'amount' => array('decimal', '15,4', 'null' => 0),
         'comment' => array('text'),
         'order_id' => array('int', 11, 'null' => 0, 'default' => '0'),
+        ':keys' => array(
+            'PRIMARY' => array('id'),
+            'contact_id' => 'contact_id',
+        ),
+    ),
+    'shop_referral_payments' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'contact_id' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'date' => array('datetime', 'null' => 0),
+        'amount' => array('decimal', '15,4', 'null' => 0),
         'data' => array('text'),
+        'status' => array('int', 11, 'null' => 0, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => array('id'),
             'contact_id' => 'contact_id',
