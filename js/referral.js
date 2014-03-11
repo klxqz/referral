@@ -131,6 +131,12 @@
             this.load('?plugin=referral&action=referrals', function() {
             });
         },
+        paymentsAction: function() {
+            this.load('?plugin=referral&action=payments', function() {
+                $.referral.initPaymentsButtons();
+                
+            });
+        },
         referralAction: function(id) {
             this.load('?plugin=referral&action=referral&referral_id=' + id, function() {
                 $.referral.initReferralButtons();
@@ -147,7 +153,7 @@
             });
         },
         initAddTransactionForm: function() {
-            
+
             $('form.add-transaction-form').submit(function() {
                 $('#response-status').html('<i style="vertical-align:middle" class="icon16 loading"></i>');
                 $('#response-status').show();
@@ -172,6 +178,58 @@
                 });
                 return false;
             });
+        },
+        initPaymentsButtons: function() {
+            var _csrf = $('input[name="_csrf"]').val();
+            $('#payments-list .edit').click(function() {
+                var $tr = $(this).closest('tr');
+                $tr.find('.status_val').hide();
+                $tr.find('.status_input').show();
+                $tr.find('.edit').hide();
+                //$tr.find('.delete').hide();
+                $tr.find('.cancel').show();
+                $tr.find('.save').show();
+                return false;
+            });
+            $('#payments-list .cancel').click(function() {
+                var $tr = $(this).closest('tr');
+                $tr.find('.status_val').show();
+                $tr.find('.status_input').hide();
+                $tr.find('.edit').show();
+                //$tr.find('.delete').show();
+                $tr.find('.cancel').hide();
+                $tr.find('.save').hide();
+                return false;
+            });
+
+            $('#payments-list .save').click(function() {
+                var $tr = $(this).closest('tr');
+                $tr.find('i.loading').css('display', 'inline-block');
+                $tr.find('.cancel').hide();
+                $.ajax({
+                    type: 'POST',
+                    url: '?plugin=referral&action=savePayment',
+                    dataType: 'json',
+                    data: {
+                        id: $tr.data('payment-id'),
+                        status: $tr.find('.status_input').val(),
+                        _csrf: _csrf
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        if (data.status == 'ok') {
+                            $tr.find('.status_val').text(data.data.status);
+                            $tr.find('.cancel').click();
+                        } else {
+                            alert(data.errors);
+                            $tr.find('.cancel').click();
+                        }
+                        $tr.find('i.loading').hide();
+                    }
+                });
+                return false;
+            });
+
+
         },
         initReferralButtons: function() {
             var _csrf = $('input[name="_csrf"]').val();

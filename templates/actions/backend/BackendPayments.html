@@ -1,0 +1,78 @@
+<style>
+    table.zebra a.action_but{
+        margin-top: 5px;
+        display: inline-block;
+    }
+    table.zebra a.cancel{
+        display: none;
+    }
+    table.zebra a.save{
+        display: none;
+    }    
+
+    table.zebra i.icon16.loading{
+        display: none;
+    }
+
+    table.zebra .status_input{
+        display: none;
+    }
+
+
+
+</style>
+<h1>Выплаты</h1>
+{if $payments}
+<table id="payments-list" class="zebra">
+    <tbody><tr class="header">
+            <th></th>
+            <th>Дата</th>
+            <th>Реферал</th>
+            <th>Сумма</th>
+            <th>Статус</th>
+        </tr>
+    </tbody>
+
+    {foreach $payments as $payment}
+    <tr data-payment-id="{$payment.id}">
+        <td>
+            <a class="action_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
+            <!--<a class="action_but delete" href="#"><i class="icon16 delete"></i>Удалить</a>-->
+            <i class="icon16 loading"></i>
+            <a class="action_but save" href="#"><i class="icon16 yes"></i>Сохранить</a>
+            <a class="action_but cancel" href="#"><i class="icon16 no"></i>Отменить</a>
+        </td>
+        <td>
+            <div class="date_val">{$payment.date|wa_datetime:"humandatetime"}</div>
+        </td>
+        <td>
+            <a href="#/referral/{$payment.contact_id}/">{$payment.name|escape}</a>
+        </td>
+        <td>
+            {shop_currency_html($payment.amount)}
+        </td>
+        <td>
+            <div class="status_val">
+                {foreach $statuses as $key => $status}
+                {if $payment.status == $key}
+                {$status}
+                {/if}
+                {/foreach}
+
+            </div>
+            <select name="status" class="status_input">
+                {foreach $statuses as $key => $status}
+                {if $payment.status == $key}
+                <option selected="selected" value="{$key}">{$status}</option>
+                {else}
+                <option value="{$key}">{$status}</option>
+                {/if}
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+    {/foreach}
+
+
+</table>
+{/if}
