@@ -91,6 +91,15 @@ class shopReferralPlugin extends shopPlugin {
         return $result && ($c['expire_datetime'] === null || strtotime($c['expire_datetime']) > time());
     }
 
+    public function orderActionCreate($param) {
+
+        if ($referral_id = $this->getReferralId() && !wa()->getUser()->isAuth()) {
+            $contact = new waContact($param['contact_id']);
+            $contact->set('referral_id', $referral_id);
+            $contact->save();
+        }
+    }
+
     public function orderActionComplete($params) {
         if ($this->getSettings('status') && $this->getSettings('order_hook') == 'complete') {
             $this->orderAction($params);

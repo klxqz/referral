@@ -1,3 +1,6 @@
+<script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.ui.widget.js"></script>
+<script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.iframe-transport.js"></script>
+<script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.fileupload.js"></script>
 <form id="form-add-promo" action="?plugin=referral&action=savePromo" method="POST">
     {$wa->csrf()}
     <input id="promo_id" type="hidden" name="promo[id]" value="{if isset($promo.id)}{$promo.id}{/if}" />

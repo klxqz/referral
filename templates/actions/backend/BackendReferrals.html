@@ -21,10 +21,14 @@
             <td>{shop_currency_html($referral.total_amount)}</td>
         </tr>
         {/foreach}
-
-
     </table>
 </form>
 {else}
 Список пуст
 {/if}
+
+<div class="block">
+    <a class="add-referral-but" href="#/addReferral/"><i class="icon16 add"></i>Добавить</a>
+    <a class="delete-promos-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
+    <span class="del-promos-result"></span>
+</div>

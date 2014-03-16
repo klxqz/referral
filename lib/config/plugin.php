@@ -15,6 +15,7 @@ return array(
         'order_action.complete' => 'orderActionComplete',
         'order_action.pay' => 'orderActionPay',
         'order_action.refund' => 'orderActionRefund',
+        'order_action.create' => 'orderActionCreate',
     ),
 );
 //EOF

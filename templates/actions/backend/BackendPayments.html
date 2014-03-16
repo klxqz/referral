@@ -17,6 +17,9 @@
     table.zebra .status_input{
         display: none;
     }
+    .full-description{
+        display: none;
+    }
 
 
 
@@ -28,6 +31,7 @@
             <th></th>
             <th>Дата</th>
             <th>Реферал</th>
+            <th>Реквизиты</th>
             <th>Сумма</th>
             <th>Статус</th>
         </tr>
@@ -47,6 +51,11 @@
         </td>
         <td>
             <a href="#/referral/{$payment.contact_id}/">{$payment.name|escape}</a>
+        </td>
+        <td style="max-width: 150px;">
+            <pre class="briefly-description" title="{$payment.data|escape}">{$payment.data|escape|truncate:100}</pre>
+            <pre class="full-description">{$payment.data|escape}</pre>
+            <a href="#" class="show-full-description">Показать</a>
         </td>
         <td>
             {shop_currency_html($payment.amount)}
@@ -75,4 +84,6 @@
 
 
 </table>
+{else}
+Список пуст
 {/if}

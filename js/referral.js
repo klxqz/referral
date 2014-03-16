@@ -134,7 +134,7 @@
         paymentsAction: function() {
             this.load('?plugin=referral&action=payments', function() {
                 $.referral.initPaymentsButtons();
-                
+
             });
         },
         referralAction: function(id) {
@@ -226,6 +226,21 @@
                         $tr.find('i.loading').hide();
                     }
                 });
+                return false;
+            });
+            $('#payments-list .show-full-description').click(function() {
+                var $tr = $(this).closest('tr');
+                if ($(this).hasClass('showed')) {
+                    $tr.find('.full-description').hide();
+                    $tr.find('.briefly-description').show();
+                    $(this).text('Показать');
+                    $(this).removeClass('showed');
+                } else {
+                    $tr.find('.briefly-description').hide();
+                    $tr.find('.full-description').show();
+                    $(this).text('Скрыть');
+                    $(this).addClass('showed');
+                }
                 return false;
             });
 
@@ -342,6 +357,76 @@
                     error: function(jqXHR, errorText) {
                     }
                 });
+            });
+        },
+        addReferralAction: function() {
+            this.load('?plugin=referral&action=addReferral', function() {
+                $.referral.initAddReferralHandler();
+            });
+        },
+        initAddReferralHandler: function() {
+            var autocompete_input = $("#customer-autocomplete");
+            autocompete_input.autocomplete({
+                source: function(request, response) {
+                    var term = request.term;
+                    $.getJSON('?action=autocomplete&type=contact', request, function(r) {
+                        response(r);
+                    });
+                },
+                delay: 300,
+                minLength: 3,
+                select: function(event, ui) {
+                    var item = ui.item;
+                    if (item.value) {
+                        $('#s-customer-id').val(item.value);
+                        $('.field-group').html('<i class="icon16 loading"></i>');
+                        $.ajax({
+                            type: 'POST',
+                            url: '?plugin=referral&action=contactForm',
+                            dataType: 'json',
+                            data: {
+                                id: item.value
+                            },
+                            success: function(data, textStatus, jqXHR) {
+                                if (data.status == 'ok') {
+                                    $('.field-group').html(data.data.html_form);
+                                    $('.balance_val').html(data.data.balance);
+                                    $('.date_input').val(data.data.date);
+                                } else {
+                                    alert(data.errors);
+                                }
+                            }
+                        });
+                    }
+                    return false;
+                },
+                focus: function(event, ui) {
+                    this.value = ui.item.name;
+                    return false;
+                }
+            });
+            $('form.add-referral-form').submit(function() {
+                $('#response-status').html('<i style="vertical-align:middle" class="icon16 loading"></i>');
+                $('#response-status').show();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    success: function(data, textStatus, jqXHR) {
+                        if (data.status == 'ok') {
+                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 yes"></i>Сохранено');
+                            $('#response-status').css('color', '#008727');
+                        } else {
+                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 no"></i>' + data.errors);
+                            $('#response-status').css('color', '#FF0000');
+                        }
+                        setTimeout(function() {
+                            $('#response-status').hide();
+                        }, 3000);
+                    }
+                });
+                return false;
             });
         },
         addPromoAction: function(id) {
