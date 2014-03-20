@@ -35,7 +35,7 @@ return array(
         'date' => array('datetime', 'null' => 0),
         'amount' => array('decimal', '15,4', 'null' => 0),
         'data' => array('text'),
-        'status' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'status' => array('enum', "'new','processing','complete','cancel'", 'null' => 0, 'default' => 'public'),
         ':keys' => array(
             'PRIMARY' => array('id'),
             'contact_id' => 'contact_id',

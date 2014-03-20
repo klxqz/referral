@@ -4,6 +4,7 @@ class shopReferralPluginBackendSavePaymentController extends waJsonController {
 
     protected $statuses = array(
         'new' => 'Новый',
+        'processing' => 'В обработке',
         'complete' => 'Выполнен',
         'cancel' => 'Отменен',
     );

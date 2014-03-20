@@ -5,7 +5,28 @@
  * @link http://wa-plugins.ru/
  */
 return array(
-    'my/referral/' => 'frontend/',
-    'my/referral/report/' => 'frontend/report/',
-    'my/referral/payments/' => 'frontend/payments/',
+    'my/referral/' => array(
+        'module' => 'frontend',
+        'plugin' => 'referral',
+        'action' => '',
+        'secure' => true,
+    ),
+    'my/referral/report/' => array(
+        'module' => 'frontend',
+        'plugin' => 'referral',
+        'action' => 'report',
+        'secure' => true,
+    ),
+    'my/referral/payments/' => array(
+        'module' => 'frontend',
+        'plugin' => 'referral',
+        'action' => 'payments',
+        'secure' => true,
+    ),
+    'my/referral/savepayment/' => array(
+        'module' => 'frontend',
+        'plugin' => 'referral',
+        'action' => 'savePayment',
+        'secure' => true,
+    ),
 );

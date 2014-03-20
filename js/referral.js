@@ -137,6 +137,12 @@
 
             });
         },
+        couponsAction: function() {
+            this.load('?plugin=referral&action=coupons', function() {
+                //$.referral.initPaymentsButtons();
+
+            });
+        },
         referralAction: function(id) {
             this.load('?plugin=referral&action=referral&referral_id=' + id, function() {
                 $.referral.initReferralButtons();

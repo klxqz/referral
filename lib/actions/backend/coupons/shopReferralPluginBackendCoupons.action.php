@@ -4,7 +4,7 @@
  * @author Коробов Николай wa-plugins.ru <support@wa-plugins.ru>
  * @link http://wa-plugins.ru/
  */
-class shopReferralPluginBackendPaymentsAction extends waViewAction {
+class shopReferralPluginBackendCouponsAction extends waViewAction {
 
     protected $statuses = array(
         'new' => 'Новый',

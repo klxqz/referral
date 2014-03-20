@@ -1,45 +1,101 @@
+<link rel="stylesheet" href="{$wa_app_static_url}plugins/referral/css/zebra.css" />
 <style>
-    #payments-list{
-        width: 100%;
+    table.zebra a.action_but{
+        margin-top: 5px;
+        display: inline-block;
     }
-    #payments-list td{
-        text-align: center;
+    table.zebra a.cancel{
+        display: none;
     }
+    table.zebra a.save{
+        display: none;
+    }    
+
+    table.zebra i.icon16.loading{
+        display: none;
+    }
+
+    table.zebra .status_input{
+        display: none;
+    }
+    .full-description{
+        display: none;
+    }
+    .data_input{
+        width: 90%;
+        height: 150px;
+        display: none;
+    }
+    .amount_input{
+        display: none;
+    }
+
 </style>
 <h1>Выплаты</h1>
 {if $payments}
-<table id="payments-list" class="zebra">
+<table id="payments-list" class="zebra" border="1">
     <tbody><tr class="header">
+            <th></th>
             <th>Дата</th>
+            <th>Реквизиты</th>
             <th>Сумма</th>
             <th>Статус</th>
         </tr>
     </tbody>
 
     {foreach $payments as $payment}
-    <tr>
+    <tr data-payment-id="{$payment.id}">
+        <td>
+            {if $payment.status == 'new'}
+            <a class="action_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
+            <!--<a class="action_but delete" href="#"><i class="icon16 delete"></i>Удалить</a>-->
+            <i class="icon16 loading"></i>
+            <a class="action_but save" href="#"><i class="icon16 yes"></i>Сохранить</a>
+            <a class="action_but cancel" href="#"><i class="icon16 no"></i>Отменить</a>
+            {/if}
+        </td>
         <td>
             <div class="date_val">{$payment.date|wa_datetime:"humandatetime"}</div>
         </td>
-        <td>
-            {shop_currency_html($payment.amount)}
+
+        <td style="max-width: 150px;">
+            <div class="data_val">
+                <div class="briefly-description" title="{$payment.data|escape}">{$payment.data|escape|truncate:100}</div>
+                <div class="full-description">{$payment.data|escape}</div>
+                <a href="#" class="show-full-description">Показать</a>
+            </div>
+
+            <textarea class="data_input">{$payment.data|escape}</textarea>
+
         </td>
         <td>
-            {if $payment.status == 'new'}
-            Новый
-            {elseif $payment.status == 'complete'}
-            Выполнен
-            {elseif $payment.status == 'cancel'}
-            Отменен
-            {/if}
+            <div class="amount_val">{shop_currency_html($payment.amount)}</div>
+            <input type="text" class="amount_input" name="amount" value="{shop_currency($payment.amount, null, null, false)}"
+        </td>
+        <td>
+            <div class="status_val">
+                {$all_statuses[$payment.status]}
+            </div>
+            <select name="status" class="status_input">
+                {foreach $user_statuses as $key => $status}
+                {if $payment.status == $key}
+                <option selected="selected" value="{$key}">{$status}</option>
+                {else}
+                <option value="{$key}">{$status}</option>
+                {/if}
+                {/foreach}
+            </select>
         </td>
     </tr>
     {/foreach}
 
 
 </table>
+{else}
+<p>Список пуст</p>
 {/if}
 
+<h2>Подать заявку на выплату</h2>
 <form method="POST" action="">
     <table>
         <tr>
@@ -64,3 +120,89 @@
 
 
 </form>
+
+<script>
+    $(function() {
+        $('#payments-list .show-full-description').click(function() {
+            var $tr = $(this).closest('tr');
+            if ($(this).hasClass('showed')) {
+                $tr.find('.full-description').hide();
+                $tr.find('.briefly-description').show();
+                $(this).text('Показать');
+                $(this).removeClass('showed');
+            } else {
+                $tr.find('.briefly-description').hide();
+                $tr.find('.full-description').show();
+                $(this).text('Скрыть');
+                $(this).addClass('showed');
+            }
+            return false;
+        });
+
+        $('#payments-list .edit').click(function() {
+            var $tr = $(this).closest('tr');
+            $tr.find('.data_val').hide();
+            $tr.find('.data_input').show();
+            $tr.find('.amount_val').hide();
+            $tr.find('.amount_input').show();
+            $tr.find('.status_val').hide();
+            $tr.find('.status_input').show();
+            $tr.find('.edit').hide();
+            $tr.find('.cancel').show();
+            $tr.find('.save').show();
+            return false;
+        });
+
+        $('#payments-list .cancel').click(function() {
+            var $tr = $(this).closest('tr');
+            $tr.find('.data_val').show();
+            $tr.find('.data_input').hide();
+            $tr.find('.amount_val').show();
+            $tr.find('.amount_input').hide();
+            $tr.find('.status_val').show();
+            $tr.find('.status_input').hide();
+            $tr.find('.edit').show();
+            $tr.find('.cancel').hide();
+            $tr.find('.save').hide();
+            return false;
+        });
+
+        $('#payments-list .save').click(function() {
+            var $tr = $(this).closest('tr');
+            $tr.find('i.loading').css('display', 'inline-block');
+            $tr.find('.cancel').hide();
+            $.ajax({
+                type: 'POST',
+                url: '{$wa_app_url}my/referral/savepayment/',
+                dataType: 'json',
+                data: {
+                    id: $tr.data('payment-id'),
+                    data: $tr.find('.data_input').val(),
+                    amount: $tr.find('.amount_input').val(),
+                    status: $tr.find('.status_input').val(),
+                    //_csrf: _csrf
+                },
+                success: function(data, textStatus, jqXHR) {
+
+                    if (data.status == 'ok') {
+                        $tr.find('.status_val').text(data.data.status);
+                        $tr.find('.data_val').text(data.data.data);
+                        $tr.find('.amount_val').text(data.data.amount);
+                        $tr.find('.cancel').click();
+                    } else {
+                        alert(data.errors);
+                        $tr.find('.cancel').click();
+                    }
+                    $tr.find('i.loading').hide();
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+
+
+
+</script>

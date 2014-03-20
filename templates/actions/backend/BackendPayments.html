@@ -40,11 +40,13 @@
     {foreach $payments as $payment}
     <tr data-payment-id="{$payment.id}">
         <td>
+            {if $payment.status == 'processing'}
             <a class="action_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
             <!--<a class="action_but delete" href="#"><i class="icon16 delete"></i>Удалить</a>-->
             <i class="icon16 loading"></i>
             <a class="action_but save" href="#"><i class="icon16 yes"></i>Сохранить</a>
             <a class="action_but cancel" href="#"><i class="icon16 no"></i>Отменить</a>
+            {/if}
         </td>
         <td>
             <div class="date_val">{$payment.date|wa_datetime:"humandatetime"}</div>
@@ -53,8 +55,8 @@
             <a href="#/referral/{$payment.contact_id}/">{$payment.name|escape}</a>
         </td>
         <td style="max-width: 150px;">
-            <pre class="briefly-description" title="{$payment.data|escape}">{$payment.data|escape|truncate:100}</pre>
-            <pre class="full-description">{$payment.data|escape}</pre>
+            <div class="briefly-description" title="{$payment.data|escape}">{$payment.data|escape|truncate:100}</div>
+            <div class="full-description">{$payment.data|escape}</div>
             <a href="#" class="show-full-description">Показать</a>
         </td>
         <td>
@@ -62,11 +64,7 @@
         </td>
         <td>
             <div class="status_val">
-                {foreach $statuses as $key => $status}
-                {if $payment.status == $key}
-                {$status}
-                {/if}
-                {/foreach}
+                {$statuses[$payment.status]}
 
             </div>
             <select name="status" class="status_input">

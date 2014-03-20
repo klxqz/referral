@@ -17,18 +17,41 @@ class shopReferralPlugin extends shopPlugin {
         return $html;
     }
 
+    public function orderCalculateDiscount($params) {
+        
+    }
+
     public function frontendHead() {
+        
+        if ($coupon_code = waRequest::request('coupon_code')) {
+            $ref_coupon_model = new shopReferralPluginCouponsModel();
+            $promo = $ref_coupon_model->getShopPromoByCouponCode($coupon_code);
+
+            if ($promo && $promo['enabled']) {
+                $coupm = new shopCouponModel();
+                $coupon = $coupm->getById($promo['coupon_id']);
+                if ($coupon) {
+                    $this->setReferralId($promo['contact_id']);
+                    $data = wa()->getStorage()->get('shop/checkout', array());
+                    $data['coupon_code'] = $coupon['code'];
+                    wa()->getStorage()->set('shop/checkout', $data);
+                    wa()->getStorage()->remove('shop/cart');
+                    wa()->getResponse()->redirect(wa()->getRouteUrl('/frontend/cart'));
+                }
+            }
+        }
+        
         if ($referral_id = waRequest::get('referral_id', 0) && !$this->getReferralId()) {
             $this->setReferralId($referral_id);
         }
-
+/*
         if ($coupon_code = waRequest::get('coupon')) {
             $data = wa()->getStorage()->get('shop/checkout', array());
             $data['coupon_code'] = $coupon_code;
             wa()->getStorage()->set('shop/checkout', $data);
             wa()->getStorage()->remove('shop/cart');
         }
-
+*/
         //если пользователь быль неавторизирован, а затем авторизировался, тогда пересохраняем реферала в базу
         if (wa()->getUser()->isAuth() && wa()->getStorage()->read('referral_id') && !wa()->getUser()->get('referral_id')) {
             $referral_id = wa()->getStorage()->read('referral_id');
