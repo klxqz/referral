@@ -41,4 +41,14 @@ return array(
             'contact_id' => 'contact_id',
         ),
     ),
+    'shop_referral_coupons' => array(
+        'contact_id' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'promo_id' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'code' => array('varchar', 32, 'null' => 0, 'default' => ''),
+        ':keys' => array(
+            'contact_id' => 'contact_id',
+            'promo_id' => 'promo_id',
+            'code' => 'code',
+        ),
+    ),
 );

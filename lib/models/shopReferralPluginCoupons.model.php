@@ -19,7 +19,7 @@ class shopReferralPluginCouponsModel extends waModel {
 
     public function getShopPromoByCouponCode($code) {
         $sql = "SELECT *
-                FROM `shop_referral_coupons` AS `src`
+                FROM `" . $this->table . "` AS `src`
                 LEFT JOIN `shop_referral_promo` AS `srp` ON `src`.`promo_id` = `srp`.`id`
                 WHERE `src`.`code` = '" . $this->escape($code) . "'";
         return $this->query($sql)->fetch();
