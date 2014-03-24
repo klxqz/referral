@@ -40,9 +40,8 @@
     {foreach $payments as $payment}
     <tr data-payment-id="{$payment.id}">
         <td>
-            {if $payment.status == 'processing'}
+            {if $payment.status == 'new' || $payment.status == 'processing'}
             <a class="action_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
-            <!--<a class="action_but delete" href="#"><i class="icon16 delete"></i>Удалить</a>-->
             <i class="icon16 loading"></i>
             <a class="action_but save" href="#"><i class="icon16 yes"></i>Сохранить</a>
             <a class="action_but cancel" href="#"><i class="icon16 no"></i>Отменить</a>
@@ -85,3 +84,6 @@
 {else}
 Список пуст
 {/if}
+<div class="block">
+    <a href="#/addPayment/"><i class="icon16 add"></i>Добавить</a>
+</div>

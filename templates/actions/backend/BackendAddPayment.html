@@ -1,0 +1,82 @@
+<style>
+    select{
+        width: 200px;
+    }
+    #response-status{
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+
+<div class="sidebar left400px s-order-customer-details">
+    <div class="block top-padded">
+        <h2><a href="#" class="back">&larr; Назад</a><span>Покупатель</span></h2>
+        <em class="errormsg s-customer-errors" style="font-size: 1.1em;"></em>
+
+        <input id="customer-autocomplete" type="search" class="search large long" placeholder="Введите имя, email или номер телефона">
+
+    </div>
+    <div class="block">
+        <div class="fields form width100px" id="s-order-edit-customer">
+            <div class="field-group">
+
+                <div class="fields form width100px">
+                    <div class="field-group">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="content left400px bordered-left">
+    <div class="block double-padded">
+        <h2><span>Выплата</span></h2>
+        <form class="add-payment-form" action="?plugin=referral&action=savePayment">
+            <input type="hidden" id="s-customer-id" name="referral_id" />
+
+            <div class="field">
+                <div class="name">
+                    Баланс рефералла
+                </div>
+                <div class="value">
+                    <span class="balance_val"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">
+                    Сумма выплаты
+                </div>
+                <div class="value">
+                    <input name="amount" type="text" value="" />
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">
+                    Дата начисления
+                </div>
+                <div class="value">
+                    <input name="date" type="text" value="" class="date_input" />
+                </div>
+            </div>
+            
+            <div class="field">
+                <div class="name">
+                    Реквизиты
+                </div>
+                <div class="value">
+                    <textarea name="data"></textarea>
+                </div>
+            </div>
+
+            <input type="submit" class="button green large" value="Сохранить">
+            <span id="response-status"></span>
+
+        </form>
+        <div class="clear-both"></div>
+    </div>
+</div>

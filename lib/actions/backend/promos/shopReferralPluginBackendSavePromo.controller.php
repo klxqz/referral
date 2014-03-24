@@ -3,37 +3,45 @@
 class shopReferralPluginBackendSavePromoController extends waJsonController {
 
     public function execute() {
-
-        $promo_post = waRequest::post('promo');
-        $promo_model = new shopReferralPluginPromoModel();
-
-        $promo = $promo_model->getById($promo_post['id']);
-
-        $file = waRequest::file('img');
-        if ($file->uploaded()) {
-            $image_path = wa()->getDataPath('plugins/referral/promos/', 'shop');
-            $name = $this->uniqueName($image_path, $file->extension);
-            try {
-                $file->waImage()->save($image_path . $name);
-                $this->response['preview'] = wa()->getDataUrl('plugins/referral/promos/' . $name, true, 'shop');
-                if ($promo && $promo['img'] && file_exists(wa()->getDataPath('plugins/referral/promos/' . $promo['img'], true, 'shop'))) {
-                    @unlink(wa()->getDataPath('plugins/referral/promos/' . $promo['img'], true, 'shop'));
-                }
-                $promo_post['img'] = $name;
-            } catch (Exception $e) {
-
-                $this->setError($e->getMessage());
+        try {
+            $promo_post = waRequest::post('promo');
+            
+            if (!$promo_post['coupon_id']) {
+                 throw new Exception('Ошибка. Купон не задан');
             }
+            if (!$promo_post['url']) {
+                 throw new Exception('Ошибка. Не указана ссылка');
+            }
+            
+            $promo_model = new shopReferralPluginPromoModel();
+    
+            $promo = $promo_model->getById($promo_post['id']);
+    
+            $file = waRequest::file('img');
+            if ($file->uploaded()) {
+                $image_path = wa()->getDataPath('plugins/referral/promos/', 'shop');
+                $name = $this->uniqueName($image_path, $file->extension);
+                
+                    $file->waImage()->save($image_path . $name);
+                    $this->response['preview'] = wa()->getDataUrl('plugins/referral/promos/' . $name, true, 'shop');
+                    if ($promo && $promo['img'] && file_exists(wa()->getDataPath('plugins/referral/promos/' . $promo['img'], true, 'shop'))) {
+                        @unlink(wa()->getDataPath('plugins/referral/promos/' . $promo['img'], true, 'shop'));
+                    }
+                    $promo_post['img'] = $name;
+                
+            }
+    
+            if ($promo) {
+                $promo_model->updateById($promo_post['id'], $promo_post);
+            } else {
+                $lastInsertId = $promo_model->insert($promo_post);
+                $this->response['id'] = $lastInsertId;
+            }
+    
+            $this->response['message'] = 'OK';
+        } catch (Exception $e) {
+            $this->setError($e->getMessage());
         }
-
-        if ($promo) {
-            $promo_model->updateById($promo_post['id'], $promo_post);
-        } else {
-            $lastInsertId = $promo_model->insert($promo_post);
-            $this->response['id'] = $lastInsertId;
-        }
-
-        $this->response['message'] = 'OK';
     }
 
     protected function uniqueName($path, $file_extension) {

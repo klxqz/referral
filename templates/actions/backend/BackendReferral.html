@@ -29,12 +29,12 @@
 </style>
 <h2>{$contact.name}</h2>
 {if $referral_transactions}
-<form action="?plugin=referral&action=deletePromos" class="promos-form">
+<form action="?plugin=referral&action=deleteTransactions" class="transactions-form">
     {$wa->csrf()}
     <table id="transactions-list" class="zebra">
         <tbody><tr class="header">
                 <th class="min-width">
-                    <input type="checkbox" class="select-all-promos">
+                    <input type="checkbox" class="select-all-transactions">
                 </th>
                 <th></th>
                 <th>Дата</th>
@@ -46,7 +46,7 @@
         {foreach $referral_transactions as $transaction}
         <tr data-transaction-id="{$transaction.id}">
             <td class="min-width">
-                <input class="select-promo-checkbox" type="checkbox" name="promo_ids[]" value="{$transaction.id}">
+                <input class="select-transaction-checkbox" type="checkbox" name="transaction_ids[]" value="{$transaction.id}">
             </td>
             <td>
                 <a class="referral_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
@@ -76,8 +76,8 @@
 
 <div class="block">
     <a class="add-transaction-but" href="#"><i class="icon16 add"></i>Добавить</a>
-    <a class="delete-promos-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
-    <span class="del-promos-result"></span>
+    <a class="delete-transactions-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
+    <span class="del-transactions-result"></span>
 </div>
 
 <div class="add-transaction">

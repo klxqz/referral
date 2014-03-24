@@ -2,11 +2,11 @@
 
 return array(
     'name' => 'Партнерская программа',
-    'description' => 'Список последних добавленных продуктов',
+    'description' => 'Средство рекламы и привлечения конечного клиента.',
     'vendor' => '985310',
     'version' => '1.0.0',
     'img' => 'img/referral.png',
-    'shop_settings' => false,
+    'shop_settings' => true,
     'frontend' => true,
     'handlers' => array(
         'backend_menu' => 'backendMenu',

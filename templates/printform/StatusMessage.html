@@ -1,0 +1,7 @@
+<p>Здравствуйте, {$referral.name|escape}!</p>
+<p>Статус выплаты №{$payment.id} был изменен на "{$payment.status_txt}"</p>
+<p>--<br>
+    {$wa->shop->settings("name")|escape}<br>
+    <a href="mailto:{$wa->shop->settings("email")}">{$wa->shop->settings("email")}</a><br>
+    {$wa->shop->settings("phone")}<br>
+</p>

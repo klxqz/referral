@@ -1,0 +1,8 @@
+<p>Здравствуйте, {$referral.name|escape}!</p>
+<p>Начисление по партнерской программе в размере {shop_currency($transaction.amount)}</p>
+<p>{$transaction.comment}</p>
+<p>--<br>
+    {$wa->shop->settings("name")|escape}<br>
+    <a href="mailto:{$wa->shop->settings("email")}">{$wa->shop->settings("email")}</a><br>
+    {$wa->shop->settings("phone")}<br>
+</p>

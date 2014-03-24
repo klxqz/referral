@@ -17,7 +17,7 @@ class shopReferralPluginBackendSavePaymentController extends waJsonController {
 
         $result = $refferal_payments_model->getById($id);
         if ($result && isset($this->statuses[$status])) {
-            if ($result['status'] == 'new' && $status == 'complete') {
+            if ($result['status'] == 'complete') {
                 $data = array(
                     'amount' => (-1) * $result['amount'],
                     'contact_id' => $result['contact_id'],
@@ -28,9 +28,31 @@ class shopReferralPluginBackendSavePaymentController extends waJsonController {
             }
 
             $refferal_payments_model->updateById($id, array('status' => $status));
+            if ($status != $result['status']) {
+                $result['status_txt'] = $this->statuses[$status];
+                shopReferralPlugin::sendStatusNotification($result['contact_id'], $result);
+            }
             $this->response['status'] = $this->statuses[$status];
         } else {
-            $this->errors = 'Ошибка. Запись не найдена';
+            $referral_id = waRequest::post('referral_id');
+            $amount = waRequest::post('amount');
+            $data = waRequest::post('data');
+            $payment = array(
+                'data' => $data,
+                'amount' => $amount,
+                'contact_id' => $referral_id,
+                'date' => waDateTime::date('Y-m-d H:i:s'),
+                'status' => 'new',
+            );
+            $refferal_payments_model = new shopReferralPluginPaymentsModel();
+            $payment_id = $refferal_payments_model->insert($payment);
+            $data = array(
+                'amount' => (-1) * $amount,
+                'contact_id' => $referral_id,
+                'comment' => 'Выплата №' . $payment_id,
+                'date' => waDateTime::date('Y-m-d H:i:s'),
+            );
+            $referral_model->insert($data);
         }
     }
 

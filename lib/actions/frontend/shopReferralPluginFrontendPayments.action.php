@@ -21,6 +21,7 @@ class shopReferralPluginFrontendPaymentsAction extends shopFrontendAction {
             $payment['date'] = waDateTime::date('Y-m-d H:i:s');
             $payment['status'] = 'new';
             $refferal_payments_model->insert($payment);
+            shopReferralPlugin::sendAdminNotification($payment);
         }
         $payments = $refferal_payments_model->where('contact_id = ' . wa()->getUser()->getId())->order('date DESC')->fetchAll();
         $this->view->assign('all_statuses', $this->all_statuses);

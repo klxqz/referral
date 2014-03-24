@@ -1,9 +1,9 @@
 {if $referrals}
-<form action="?plugin=referral&action=deletePromos" class="promos-form">
-    <table id="sliders-list" class="zebra">
+<form action="?plugin=referral&action=deleteReferrals" class="referrals-form">
+    <table class="zebra">
         <tbody><tr class="header">
                 <th class="min-width">
-                    <input type="checkbox" class="select-all-promos">
+                    <input type="checkbox" class="select-all-referrals">
                 </th>
                 <th>Реферал</th>
                 <th>Сумма</th>
@@ -13,7 +13,7 @@
         {foreach $referrals as $referral}
         <tr>
             <td class="min-width">
-                <input class="select-promo-checkbox" type="checkbox" name="promo_ids[]" value="{$referral.id}">
+                <input class="select-referral-checkbox" type="checkbox" name="referral_ids[]" value="{$referral.id}">
             </td>
             <td>
                 <a href="#/referral/{$referral.id}/">{$referral.name|escape}</a>
@@ -29,6 +29,6 @@
 
 <div class="block">
     <a class="add-referral-but" href="#/addReferral/"><i class="icon16 add"></i>Добавить</a>
-    <a class="delete-promos-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
-    <span class="del-promos-result"></span>
+    <a class="delete-referrals-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
+    <span class="del-referrals-result"></span>
 </div>

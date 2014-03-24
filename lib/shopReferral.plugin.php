@@ -34,7 +34,7 @@ class shopReferralPlugin extends shopPlugin {
                     $data['coupon_code'] = $coupon['code'];
                     wa()->getStorage()->set('shop/checkout', $data);
                     wa()->getStorage()->remove('shop/cart');
-                    wa()->getResponse()->redirect(wa()->getRouteUrl('/frontend/cart'));
+                    wa()->getResponse()->redirect(waRequest::server('HTTP_REFERER'));
                 }
             }
         }
@@ -106,7 +106,7 @@ class shopReferralPlugin extends shopPlugin {
 
     public function orderActionCreate($param) {
 
-        if ($referral_id = $this->getReferralId() && !wa()->getUser()->isAuth()) {
+        if (($referral_id = $this->getReferralId()) && !wa()->getUser()->isAuth()) {
             $contact = new waContact($param['contact_id']);
             $contact->set('referral_id', $referral_id);
             $contact->save();
@@ -164,7 +164,7 @@ class shopReferralPlugin extends shopPlugin {
                     'order_id' => $order_id,
                 );
                 $referral_model->insert($data);
-
+                shopReferralPlugin::sendReferralNotification($referral_id, $data);
                 $this->multiReferralPayment($c_referral_id, $c_amount, $order_id);
             }
         } else {
@@ -176,6 +176,70 @@ class shopReferralPlugin extends shopPlugin {
                 'order_id' => $order_id,
             );
             $referral_model->insert($data);
+            shopReferralPlugin::sendReferralNotification($referral_id, $data);
+        }
+    }
+
+    public static function sendAdminNotification($payment) {
+
+        $general = wa('shop')->getConfig()->getGeneralSettings();
+        $to = $general['email'];
+
+        $template_path = wa()->getDataPath('plugins/referral/templates/printform/AdminMessage.html', false, 'shop', true);
+        if (!file_exists($template_path)) {
+            $template_path = wa()->getAppPath('plugins/referral/templates/printform/AdminMessage.html', 'shop');
+        }
+        $referral = new waContact($payment['contact_id']);
+
+        $view = wa()->getView();
+        $view->assign('referral', $referral);
+        $view->assign('payment', $payment);
+        $notification = $view->fetch($template_path);
+
+        $message = new waMailMessage('Партнерская программа', $notification);
+        $message->setTo($to);
+        $message->send();
+    }
+
+    public static function sendReferralNotification($referral_id, $transaction) {
+        $referral = new waContact($referral_id);
+        $email = $referral->get('email', 'default');
+        if ($email) {
+            $general = wa('shop')->getConfig()->getGeneralSettings();
+            $template_path = wa()->getDataPath('plugins/referral/templates/printform/ReferralMessage.html', false, 'shop', true);
+            if (!file_exists($template_path)) {
+                $template_path = wa()->getAppPath('plugins/referral/templates/printform/ReferralMessage.html', 'shop');
+            }
+            $view = wa()->getView();
+            $view->assign('referral', $referral);
+            $view->assign('transaction', $transaction);
+            $notification = $view->fetch($template_path);
+            $message = new waMailMessage('Партнерская программа', $notification);
+            $message->setTo($email);
+            $from = $general['email'];
+            $message->setFrom($from, $general['name']);
+            $message->send();
+        }
+    }
+
+    public static function sendStatusNotification($referral_id, $payment) {
+        $referral = new waContact($referral_id);
+        $email = $referral->get('email', 'default');
+        if ($email) {
+            $general = wa('shop')->getConfig()->getGeneralSettings();
+            $template_path = wa()->getDataPath('plugins/referral/templates/printform/StatusMessage.html', false, 'shop', true);
+            if (!file_exists($template_path)) {
+                $template_path = wa()->getAppPath('plugins/referral/templates/printform/StatusMessage.html', 'shop');
+            }
+            $view = wa()->getView();
+            $view->assign('referral', $referral);
+            $view->assign('payment', $payment);
+            $notification = $view->fetch($template_path);
+            $message = new waMailMessage('Партнерская программа', $notification);
+            $message->setTo($email);
+            $from = $general['email'];
+            $message->setFrom($from, $general['name']);
+            $message->send();
         }
     }
 
@@ -200,6 +264,7 @@ class shopReferralPlugin extends shopPlugin {
                 'comment' => $comment,
             );
             $referral_model->insert($data);
+            shopReferralPlugin::sendReferralNotification($referral_id, $comment);
         }
     }
 

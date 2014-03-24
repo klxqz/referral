@@ -129,6 +129,7 @@
         },
         referralsAction: function() {
             this.load('?plugin=referral&action=referrals', function() {
+                $.referral.initReferralsButtons();
             });
         },
         paymentsAction: function() {
@@ -139,13 +140,12 @@
         },
         couponsAction: function() {
             this.load('?plugin=referral&action=coupons', function() {
-                //$.referral.initPaymentsButtons();
 
             });
         },
         referralAction: function(id) {
             this.load('?plugin=referral&action=referral&referral_id=' + id, function() {
-                $.referral.initReferralButtons();
+                $.referral.initReferralButtons(id);
                 $.referral.initAddTransactionForm();
             });
         },
@@ -252,7 +252,61 @@
 
 
         },
-        initReferralButtons: function() {
+        initReferralsButtons: function() {
+            $('.select-all-referrals').click(function() {
+                if ($(this).attr('checked')) {
+                    $('.select-referral-checkbox').attr('checked', 'checked');
+                } else {
+                    $('.select-referral-checkbox').removeAttr('checked');
+                }
+            });
+
+            $('.delete-referrals-but').click(function() {
+                var $form = $('.referrals-form');
+                $.ajax({
+                    type: 'POST',
+                    url: $form.attr('action'),
+                    data: $form.serializeArray(),
+                    dataType: 'json',
+                    success: function(data, textStatus, jqXHR) {
+                        $.referral.message(data, {content: $('.del-referrals-result')});
+                        if (data.status == 'ok') {
+                            $.referral.referralsAction();
+                        }
+                    },
+                    error: function(jqXHR, errorText) {
+                    }
+                });
+            });
+        },
+        initReferralButtons: function(id) {
+
+            $('.select-all-transactions').click(function() {
+                if ($(this).attr('checked')) {
+                    $('.select-transaction-checkbox').attr('checked', 'checked');
+                } else {
+                    $('.select-transaction-checkbox').removeAttr('checked');
+                }
+            });
+
+            $('.delete-transactions-but').click(function() {
+                var $form = $('.transactions-form');
+                $.ajax({
+                    type: 'POST',
+                    url: $form.attr('action'),
+                    data: $form.serializeArray(),
+                    dataType: 'json',
+                    success: function(data, textStatus, jqXHR) {
+                        $.referral.message(data, {content: $('.del-transactions-result')});
+                        if (data.status == 'ok') {
+                            $.referral.referralAction(id);
+                        }
+                    },
+                    error: function(jqXHR, errorText) {
+                    }
+                });
+            });
+
             var _csrf = $('input[name="_csrf"]').val();
             $('#transactions-list .edit').click(function() {
                 var $tr = $(this).closest('tr');
@@ -365,9 +419,79 @@
                 });
             });
         },
+        addPaymentAction: function() {
+            this.load('?plugin=referral&action=addPayment', function() {
+                $.referral.initAddPaymentHandler();
+            });
+        },
         addReferralAction: function() {
             this.load('?plugin=referral&action=addReferral', function() {
                 $.referral.initAddReferralHandler();
+            });
+        },
+        initAddPaymentHandler: function() {
+            var autocompete_input = $("#customer-autocomplete");
+            autocompete_input.autocomplete({
+                source: function(request, response) {
+                    var term = request.term;
+                    $.getJSON('?action=autocomplete&type=contact', request, function(r) {
+                        response(r);
+                    });
+                },
+                delay: 300,
+                minLength: 3,
+                select: function(event, ui) {
+                    var item = ui.item;
+                    if (item.value) {
+                        $('#s-customer-id').val(item.value);
+                        $('.field-group').html('<i class="icon16 loading"></i>');
+                        $.ajax({
+                            type: 'POST',
+                            url: '?plugin=referral&action=contactForm',
+                            dataType: 'json',
+                            data: {
+                                id: item.value
+                            },
+                            success: function(data, textStatus, jqXHR) {
+                                if (data.status == 'ok') {
+                                    $('.field-group').html(data.data.html_form);
+                                    $('.balance_val').html(data.data.balance);
+                                    $('.date_input').val(data.data.date);
+                                } else {
+                                    alert(data.errors);
+                                }
+                            }
+                        });
+                    }
+                    return false;
+                },
+                focus: function(event, ui) {
+                    this.value = ui.item.name;
+                    return false;
+                }
+            });
+            $('form.add-payment-form').submit(function() {
+                $('#response-status').html('<i style="vertical-align:middle" class="icon16 loading"></i>');
+                $('#response-status').show();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    success: function(data, textStatus, jqXHR) {
+                        if (data.status == 'ok') {
+                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 yes"></i>Сохранено');
+                            $('#response-status').css('color', '#008727');
+                        } else {
+                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 no"></i>' + data.errors);
+                            $('#response-status').css('color', '#FF0000');
+                        }
+                        setTimeout(function() {
+                            $('#response-status').hide();
+                        }, 3000);
+                    }
+                });
+                return false;
             });
         },
         initAddReferralHandler: function() {
@@ -457,6 +581,7 @@
         },
         fileUploadInit: function()
         {
+
             $('.fileupload').fileupload({
                 url: '?plugin=referral&action=savePromo',
                 dataType: 'json',
@@ -469,7 +594,6 @@
                         if (data.result.data.id) {
                             $('#promo_id').val(data.result.data.id);
                         }
-
                     } else {
                         $.referral.message(data.result, {content: $(this).parent().find('.promo-result')});
                     }
