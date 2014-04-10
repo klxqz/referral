@@ -8,7 +8,7 @@ return array(
     'my/referral/' => array(
         'module' => 'frontend',
         'plugin' => 'referral',
-        'action' => '',
+        'action' => 'referralMain',
         'secure' => true,
     ),
     'my/referral/report/' => array(

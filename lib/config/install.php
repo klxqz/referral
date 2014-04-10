@@ -3,6 +3,8 @@
 $plugin_id = array('shop', 'referral');
 $app_settings_model = new waAppSettingsModel();
 $app_settings_model->set($plugin_id, 'status', '1');
+$app_settings_model->set($plugin_id, 'frontend_name', 'Партнерская программа');
+$app_settings_model->set($plugin_id, 'frontend_description', 'Информация и статистика по партнерской программе');
 $app_settings_model->set($plugin_id, 'referral_percent', '5');
 $app_settings_model->set($plugin_id, 'including_delivery', '0');
 $app_settings_model->set($plugin_id, 'order_hook', 'complete');

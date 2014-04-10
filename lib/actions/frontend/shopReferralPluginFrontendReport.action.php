@@ -3,6 +3,10 @@
 class shopReferralPluginFrontendReportAction extends shopFrontendAction {
 
     public function execute() {
+        $app_settings_model = new waAppSettingsModel();
+        if (!$app_settings_model->get(shopReferralPlugin::$plugin_id, 'status')) {
+            throw new waException(_ws("Page not found"), 404);
+        }
         $referral_id = wa()->getUser()->getId();
         $referral_model = new shopReferralPluginModel();
         $order_items_model = new shopOrderItemsModel();
@@ -20,17 +24,19 @@ class shopReferralPluginFrontendReportAction extends shopFrontendAction {
     }
 
     public static function getBreadcrumbs() {
-        $result = shopReferralPluginFrontendAction::getBreadcrumbs();
+
+        $app_settings_model = new waAppSettingsModel();
+        $result = shopReferralPluginFrontendReferralMainAction::getBreadcrumbs();
         $result[] = array(
-            'name' => 'Партнерская программа',
-            'url' => wa()->getRouteUrl('shop/frontend/'),
+            'name' => $app_settings_model->get(shopReferralPlugin::$plugin_id, 'frontend_name'),
+            'url' => wa()->getRouteUrl('shop/frontend/referralMain'),
         );
         return $result;
     }
-    
-    private function implodeNames($items){
+
+    private function implodeNames($items) {
         $names = array();
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $names[] = $item['name'];
         }
         return implode(', ', $names);

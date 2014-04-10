@@ -3,6 +3,11 @@
 class shopReferralPluginSettingsAction extends waViewAction {
 
     protected $printforms = array(
+        'FrontendDescription' => array(
+            'name' => 'Ваш текст на странице в личном кабинете',
+            'path' => 'plugins/referral/templates/printform/FrontendDescription.html',
+            'change_tpl' => false,
+        ),
         'ReferralMesssage' => array(
             'name' => 'Уведомление рефералу о начисление бонусов',
             'path' => 'plugins/referral/templates/printform/ReferralMessage.html',

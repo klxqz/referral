@@ -8,6 +8,7 @@ return array(
     'shop_referral_promo' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'name' => array('varchar', 255, 'null' => 0, 'default' => ''),
+        'description' => array('text'),
         'coupon_id' => array('int', 11, 'null' => 0, 'default' => '0'),
         'url' => array('varchar', 255, 'null' => 0, 'default' => ''),
         'img' => array('varchar', 255, 'null' => 0, 'default' => ''),

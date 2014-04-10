@@ -8,12 +8,15 @@ class shopReferralPluginFrontendPaymentsAction extends shopFrontendAction {
         'complete' => 'Выполнен',
         'cancel' => 'Отменен',
     );
-    
     protected $user_statuses = array(
         'new' => 'Новый',
     );
 
     public function execute() {
+        $app_settings_model = new waAppSettingsModel();
+        if (!$app_settings_model->get(shopReferralPlugin::$plugin_id, 'status')) {
+            throw new waException(_ws("Page not found"), 404);
+        }
         $payment = waRequest::post('payment');
         $refferal_payments_model = new shopReferralPluginPaymentsModel();
         if ($payment) {
@@ -32,10 +35,11 @@ class shopReferralPluginFrontendPaymentsAction extends shopFrontendAction {
     }
 
     public static function getBreadcrumbs() {
-        $result = shopReferralPluginFrontendAction::getBreadcrumbs();
+        $app_settings_model = new waAppSettingsModel();
+        $result = shopReferralPluginFrontendReferralMainAction::getBreadcrumbs();
         $result[] = array(
-            'name' => 'Партнерская программа',
-            'url' => wa()->getRouteUrl('shop/frontend/'),
+            'name' => $app_settings_model->get(shopReferralPlugin::$plugin_id, 'frontend_name'),
+            'url' => wa()->getRouteUrl('shop/frontend/referralMain'),
         );
         return $result;
     }

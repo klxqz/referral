@@ -26,6 +26,9 @@
         margin-top: 20px;
         display: none;
     }
+    .transfer-container{
+        display: none;
+    }
 </style>
 <h2>{$contact.name}</h2>
 {if $referral_transactions}
@@ -77,11 +80,16 @@
 <div class="block">
     <a class="add-transaction-but" href="#"><i class="icon16 add"></i>Добавить</a>
     <a class="delete-transactions-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
+    <a class="transfer-but" href="#"><i class="icon16 sync "></i>Перевести бонусные баллы на другой счет</a>
     <span class="del-transactions-result"></span>
 </div>
 
 <div class="add-transaction">
     {include file="./include.addTransaction.html"}
+</div>
+
+<div class="transfer-container">
+    {include file="./include.transfer.html"}
 </div>
 
 {else}

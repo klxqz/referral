@@ -1,3 +1,4 @@
+{include file="$FrontendDescription"}
 <ul>
     <li><a href="{$wa->getUrl('shop/frontend/report/')}">Отчет</a></li>
     <li><a href="{$wa->getUrl('shop/frontend/payments/')}">Выплаты</a></li>
@@ -5,15 +6,18 @@
 {if $promos}
 {foreach $promos as $promo}
 <div>
-    <div>
+    <div class="referral-promo-name">
         <h2>{$promo.name|escape}</h2>
     </div>
-    <div>
+    <div class="referral-promo-description">
+        {$promo.description}
+    </div>
+    <div class="referral-promo-img">
         {if isset($promo.img)}
         <img src="{$wa_url}wa-data/public/shop/plugins/referral/promos/{$promo.img}"/>
         {/if}
     </div>
-    <div>
+    <div class="referral-promo-code">
         <p>Код для вставки:</p>
         <textarea cols="100">{$promo.code|escape}</textarea>
         <p>Купон на скидку: {$promo.ref_coupon}</p>
@@ -22,5 +26,5 @@
 {/foreach}
 
 {else}
-Список пуст
+    Список пуст
 {/if}

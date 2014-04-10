@@ -1,6 +1,26 @@
+<link href="{$wa_url}wa-content/js/codemirror/lib/codemirror.css" type="text/css" rel="stylesheet"/>
+
+<script type="text/javascript" src="{$wa_url}wa-content/js/codemirror/lib/codemirror.js"></script>
+<script type="text/javascript" src="{$wa_url}wa-content/js/codemirror/mode/xml/xml.js"></script>
+<script type="text/javascript" src="{$wa_url}wa-content/js/codemirror/mode/javascript/javascript.js"></script>
+<script type="text/javascript" src="{$wa_url}wa-content/js/codemirror/mode/css/css.js"></script>
+<script type="text/javascript" src="{$wa_url}wa-content/js/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+<style type="text/css">
+    #wa .CodeMirror{
+        border: 1px solid #eee;
+    }
+    .CodeMirror-scroll {
+        height: auto;
+        overflow-y: hidden;
+        overflow-x: auto;
+    }
+</style>
+
 <script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.ui.widget.js"></script>
 <script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.iframe-transport.js"></script>
 <script src="{$wa_app_static_url}plugins/referral/js/vendors/jquery.fileupload.js"></script>
+
 <form id="form-add-promo" action="?plugin=referral&action=savePromo" method="POST">
     {$wa->csrf()}
     <input id="promo_id" type="hidden" name="promo[id]" value="{if isset($promo.id)}{$promo.id}{/if}" />
@@ -16,8 +36,20 @@
         </div>
     </div>
     <div class="field">
-        <div class="name">Название слайдера</div>
+        <div class="name">Название</div>
         <div class="value"><input type="text" name="promo[name]" value="{$promo.name|escape}" class="long bold" /></div>
+    </div>
+    <div class="field">
+        <div class="name">Описание</div>
+        <div class="value">
+            <textarea class="html-template" name="promo[description]">{$promo.description|escape}</textarea>
+            {literal}
+            <p>
+                {$referral_id} - код рефералла<br/>
+                {$coupon_code} - код купона рефералла
+            </p>
+            {/literal}
+        </div>
     </div>
     <div class="field">
         <div class="name">Ссылка</div>
@@ -63,11 +95,23 @@
 
     <div class="field">
         <div class="value submit">
-            <input type="submit" value="Сохранить" class="button green">
-            <span style="display:none" id="form-result">
+                 <input type="submit" value="Сохранить" class="button green">
+                 <span style="display:none" id="form-result">
 
-            </span>
+                 </span>
+             </div>
         </div>
-    </div>
-</form>
+    </form>
 
+    <script type="text/javascript">
+        $(function() {
+            $("textarea.html-template").each(function() {
+                CodeMirror.fromTextArea(this, {
+                    mode: "text/html",
+                    tabMode: "indent",
+                    height: "dynamic",
+                    lineWrapping: true
+                });
+            });
+        });
+    </script>

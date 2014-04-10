@@ -147,6 +147,7 @@
             this.load('?plugin=referral&action=referral&referral_id=' + id, function() {
                 $.referral.initReferralButtons(id);
                 $.referral.initAddTransactionForm();
+                $.referral.initTransferForm();
             });
         },
         selectAllPromosInit: function() {
@@ -161,25 +162,56 @@
         initAddTransactionForm: function() {
 
             $('form.add-transaction-form').submit(function() {
+                var $form = $(this);
                 $('#response-status').html('<i style="vertical-align:middle" class="icon16 loading"></i>');
                 $('#response-status').show();
                 $.ajax({
                     type: 'POST',
-                    url: $(this).attr('action'),
+                    url: $form.attr('action'),
                     dataType: 'json',
-                    data: $(this).serialize(),
+                    data: $form.serialize(),
                     success: function(data, textStatus, jqXHR) {
                         if (data.status == 'ok') {
-                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 yes"></i>Сохранено');
-                            $('#response-status').css('color', '#008727');
+                            $form.find('#response-status').html('<i style="vertical-align:middle" class="icon16 yes"></i>' + data.response.message);
+                            $form.find('#response-status').css('color', '#008727');
+                            setTimeout(function() {
+                                $form.find('#response-status').hide();
+                                location.reload();
+                            }, 3000);
                         } else {
-                            $('#response-status').html('<i style="vertical-align:middle" class="icon16 no"></i>' + data.errors);
-                            $('#response-status').css('color', '#FF0000');
+                            $form.find('#response-status').html('<i style="vertical-align:middle" class="icon16 no"></i>' + data.errors);
+                            $form.find('#response-status').css('color', '#FF0000');
                         }
-                        setTimeout(function() {
-                            $('#response-status').hide();
-                            location.reload();
-                        }, 3000);
+
+                    }
+                });
+                return false;
+            });
+        },
+        initTransferForm: function() {
+
+            $('form.transfer-form').submit(function() {
+                var $form = $(this);
+                $('#response-status').html('<i style="vertical-align:middle" class="icon16 loading"></i>');
+                $('#response-status').show();
+                $.ajax({
+                    type: 'POST',
+                    url: $form.attr('action'),
+                    dataType: 'json',
+                    data: $form.serialize(),
+                    success: function(data, textStatus, jqXHR) {
+                        if (data.status == 'ok') {
+                            $form.find('#response-status').html('<i style="vertical-align:middle" class="icon16 yes"></i>Сохранено');
+                            $form.find('#response-status').css('color', '#008727');
+                            setTimeout(function() {
+                                $form.find('#response-status').hide();
+                                location.reload();
+                            }, 3000);
+                        } else {
+                            $form.find('#response-status').html('<i style="vertical-align:middle" class="icon16 no"></i>' + data.errors);
+                            $form.find('#response-status').css('color', '#FF0000');
+                        }
+
                     }
                 });
                 return false;
@@ -395,6 +427,10 @@
             });
             $('.add-transaction-but').click(function() {
                 $('.add-transaction').show();
+                return false;
+            });
+            $('.transfer-but').click(function() {
+                $('.transfer-container').show();
                 return false;
             });
 

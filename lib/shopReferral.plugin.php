@@ -2,6 +2,8 @@
 
 class shopReferralPlugin extends shopPlugin {
 
+    public static $plugin_id = array('shop', 'referral');
+
     public function backendMenu() {
         if ($this->getSettings('status')) {
             $html = '<li ' . (waRequest::get('plugin') == $this->id ? 'class="selected"' : 'class="no-tab"') . '>
@@ -12,11 +14,16 @@ class shopReferralPlugin extends shopPlugin {
     }
 
     public function frontendMy() {
-        $html = '<a href="' . wa()->getRouteUrl('shop/frontend/') . '">Партнерская программа</a>';
-        return $html;
+        if ($this->getSettings('status')) {
+            $html = '<p><a href="' . wa()->getRouteUrl('shop/frontend/referrelMain/') . '"><strong>' . $this->getSettings('frontend_name') . '</strong></a><br>' . $this->getSettings('frontend_description') . '</p>';
+            return $html;
+        }
     }
 
     public function frontendHead() {
+        if (!$this->getSettings('status')) {
+            return false;
+        }
         if ($coupon_code = waRequest::request('coupon_code')) {
             $ref_coupon_model = new shopReferralPluginCouponsModel();
             $promo = $ref_coupon_model->getShopPromoByCouponCode($coupon_code);

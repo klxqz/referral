@@ -23,6 +23,20 @@
                 </select>
             </div>
         </div>
+        
+        
+        <div class="field">
+            <div class="name">Название страницы в личном кабинете</div>
+            <div class="value">
+                <input type="text" name="shop_referral[frontend_name]" value="{$settings.frontend_name|escape}"  />
+            </div>
+        </div>
+        <div class="field">
+            <div class="name">Описание страницы в личном кабинете</div>
+            <div class="value">
+                <input type="text" name="shop_referral[frontend_description]" value="{$settings.frontend_description|escape}"  />
+            </div>
+        </div>
 
 
         <div class="field">
@@ -111,7 +125,7 @@
 </div>
 <script type="text/javascript">
     $(function() {
-        var ids = ["sf-template-ReferralMesssage", "sf-template-AdminMesssage","sf-template-StatusMesssage"];
+        var ids = ["sf-template-ReferralMesssage", "sf-template-AdminMesssage","sf-template-StatusMesssage",'sf-template-FrontendDescription'];
         for (var i = 0; i < ids.length; i++) {
             var c = CodeMirror.fromTextArea(document.getElementById(ids[i]), {
                 mode: "text/html",
