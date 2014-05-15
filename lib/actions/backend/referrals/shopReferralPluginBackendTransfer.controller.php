@@ -39,7 +39,7 @@ class shopReferralPluginBackendTransferController extends waJsonController {
     public function waBonusesTransfer($transfer) {
 
         if (!class_exists('shopBonusesPluginModel')) {
-            throw new Exception('Плагин "Бонусы за покупку" не установлен"');
+            throw new Exception('Плагин "Бонусы за покупку" не установлен');
         }
         $bonus_model = new shopBonusesPluginModel();
         $referral_model = new shopReferralPluginModel();

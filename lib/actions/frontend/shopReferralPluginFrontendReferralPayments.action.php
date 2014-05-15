@@ -1,6 +1,6 @@
 <?php
 
-class shopReferralPluginFrontendPaymentsAction extends shopFrontendAction {
+class shopReferralPluginFrontendReferralPaymentsAction extends shopFrontendAction {
 
     protected $all_statuses = array(
         'new' => 'Новый',
@@ -14,7 +14,7 @@ class shopReferralPluginFrontendPaymentsAction extends shopFrontendAction {
 
     public function execute() {
         $app_settings_model = new waAppSettingsModel();
-        if (!$app_settings_model->get(shopReferralPlugin::$plugin_id, 'status')) {
+        if (!$app_settings_model->get(shopReferralPlugin::$plugin_id, 'status') || !$app_settings_model->get(shopReferralPlugin::$plugin_id, 'enable_payments')) {
             throw new waException(_ws("Page not found"), 404);
         }
         $payment = waRequest::post('payment');

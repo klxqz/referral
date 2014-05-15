@@ -83,6 +83,7 @@
         </div>
         <div class="value">
             <select name="promo[coupon_id]">
+                <option value="0">Без купона</option>
                 {foreach $coupons as $c}
                 <option {if $c.id==$promo.coupon_id}selected="selected"{/if} value="{$c.id}">{$c.code} - {$c.hint}</option>
                 {/foreach}

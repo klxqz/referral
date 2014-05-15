@@ -1,29 +1,35 @@
-{include file="$FrontendDescription"}
+<h1><span>{$frontend_name}</span></h1>
+
+{$wa->myNav('menu-h bottom-padded')}
+
 <ul>
-    <li><a href="{$wa->getUrl('shop/frontend/report/')}">Отчет</a></li>
-    <li><a href="{$wa->getUrl('shop/frontend/payments/')}">Выплаты</a></li>
+    {if $enable_report}<li><a href="{$wa->getUrl('shop/frontend/referralReport/')}">Отчет</a></li>{/if}
+    {if $enable_payments}<li><a href="{$wa->getUrl('shop/frontend/referralPayments/')}">Выплаты</a></li>{/if}
 </ul>
+<br>
+{include file="$FrontendDescription"}
+
 {if $promos}
-{foreach $promos as $promo}
-<div>
-    <div class="referral-promo-name">
-        <h2>{$promo.name|escape}</h2>
-    </div>
-    <div class="referral-promo-description">
-        {$promo.description}
-    </div>
-    <div class="referral-promo-img">
-        {if isset($promo.img)}
-        <img src="{$wa_url}wa-data/public/shop/plugins/referral/promos/{$promo.img}"/>
-        {/if}
-    </div>
-    <div class="referral-promo-code">
-        <p>Код для вставки:</p>
-        <textarea cols="100">{$promo.code|escape}</textarea>
-        <p>Купон на скидку: {$promo.ref_coupon}</p>
-    </div>
-</div>
-{/foreach}
+    {foreach $promos as $promo}
+        <div>
+            <div class="referral-promo-name">
+                <h2>{$promo.name|escape}</h2>
+            </div>
+            <div class="referral-promo-description">
+                {$promo.description}
+            </div>
+            <div class="referral-promo-img">
+                {if isset($promo.img)}
+                    <img src="{$wa_url}wa-data/public/shop/plugins/referral/promos/{$promo.img}"/>
+                {/if}
+            </div>
+            <div class="referral-promo-code">
+                <p>Код для вставки:</p>
+                <textarea cols="100">{$promo.code|escape}</textarea>
+                <p>Купон на скидку: {$promo.ref_coupon}</p>
+            </div>
+        </div>
+    {/foreach}
 
 {else}
     Список пуст

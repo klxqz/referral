@@ -3,6 +3,10 @@
 class shopReferralPlugin extends shopPlugin {
 
     public static $plugin_id = array('shop', 'referral');
+    public static $transfers = array(
+        'webasyst' => 'Партнерская программа(Вебасист)',
+        'wa-bonuses' => 'Плагин "Бонусы за покупку"',
+    );
 
     public function backendMenu() {
         if ($this->getSettings('status')) {
@@ -13,9 +17,35 @@ class shopReferralPlugin extends shopPlugin {
         }
     }
 
-    public function frontendMy() {
+    public function frontendMyNav() {
         if ($this->getSettings('status')) {
-            $html = '<p><a href="' . wa()->getRouteUrl('shop/frontend/referrelMain/') . '"><strong>' . $this->getSettings('frontend_name') . '</strong></a><br>' . $this->getSettings('frontend_description') . '</p>';
+            $html = '<a title="' . $this->getSettings('frontend_description') . '" href="' . wa()->getRouteUrl('shop/frontend/referralMain') . '">' . $this->getSettings('frontend_name') . '</a>';
+            return $html;
+        }
+    }
+
+    public function frontendCheckout($param) {
+        if ($this->getSettings('status') && $param['step'] == 'success') {
+
+            $template_path = wa()->getDataPath('plugins/referral/templates/tpls/FrontendCheckout.html', false, 'shop', true);
+            if (!file_exists($template_path)) {
+                $template_path = wa()->getAppPath('plugins/referral/templates/tpls/FrontendCheckout.html', 'shop');
+            }
+            $view = wa()->getView();
+            if (wa()->getUser()->isAuth()) {
+                $referral = wa()->getUser();
+                if ($promo_id = $this->getSettings('success_promo')) {
+                    $promo_model = new shopReferralPluginPromoModel();
+                    $promo = $promo_model->getById($promo_id);
+                    shopReferral::initReferralCoupon($promo, $referral['id']);
+                    $view->assign('promo', $promo);
+                }
+                $view->assign('referral', $referral);
+            }
+
+            $view->assign('frontend_description', $this->getSettings('frontend_description'));
+            $view->assign('frontend_name', $this->getSettings('frontend_name'));
+            $html = $view->fetch($template_path);
             return $html;
         }
     }
@@ -24,24 +54,24 @@ class shopReferralPlugin extends shopPlugin {
         if (!$this->getSettings('status')) {
             return false;
         }
-        if ($coupon_code = waRequest::request('coupon_code')) {
+        if (($coupon_code = waRequest::request('coupon_code')) && ($coupon_code != wa()->getStorage()->get('coupon_code'))) {
             $ref_coupon_model = new shopReferralPluginCouponsModel();
             $promo = $ref_coupon_model->getShopPromoByCouponCode($coupon_code);
 
             if ($promo && $promo['enabled']) {
+                //установка реферала по купону
+                if (($referral_id = $promo['contact_id']) && !$this->getReferralId()) {
+                    $this->setReferralId($referral_id);
+                }
+
                 $coupm = new shopCouponModel();
-                $coupon = $coupm->getById($promo['coupon_id']);
-                if ($coupon) {
-
-                    if (($referral_id = $promo['contact_id']) && !$this->getReferralId()) {
-                        $this->setReferralId($referral_id);
-                    }
-
+                if ($promo['coupon_id'] && ($coupon = $coupm->getById($promo['coupon_id']))) {
                     $data = wa()->getStorage()->get('shop/checkout', array());
                     $data['coupon_code'] = $coupon['code'];
                     wa()->getStorage()->set('shop/checkout', $data);
+                    wa()->getStorage()->set('coupon_code', $coupon_code);
                     wa()->getStorage()->remove('shop/cart');
-                    wa()->getResponse()->redirect(waRequest::server('HTTP_REFERER'));
+                    wa()->getResponse()->redirect(waRequest::server('REQUEST_URI'));
                 }
             }
         }
@@ -143,48 +173,11 @@ class shopReferralPlugin extends shopPlugin {
         } else {
             $total = $order['total'] - $order['shipping'];
         }
-        $amount = $this->getReferralAmount($total);
+        $amount = self::getReferralAmount($total);
         $def_currency = wa('shop')->getConfig()->getCurrency(true);
         $amount = shop_currency($amount, $order['currency'], $def_currency, false);
 
-        $this->multiReferralPayment($referral_id, $amount, $params['order_id']);
-    }
-
-    protected function multiReferralPayment($referral_id, $amount, $order_id = null) {
-        $referral_model = new shopReferralPluginModel();
-        $contact = new waContact($referral_id);
-        $c_referral_id = $contact->get('referral_id', 'default');
-
-        $comment = '';
-        if ($order_id) {
-            $comment = 'Начисление. Заказ №' . shopHelper::encodeOrderId($order_id);
-        }
-
-        if ($c_referral_id) {
-            $c_amount = $this->getReferralAmount($amount);
-            if ($c_amount > 0.01) {
-                $data = array(
-                    'contact_id' => $referral_id,
-                    'date' => waDateTime::date('Y-m-d H:i:s'),
-                    'amount' => $amount - $c_amount,
-                    'comment' => $comment,
-                    'order_id' => $order_id,
-                );
-                $referral_model->insert($data);
-                shopReferralPlugin::sendReferralNotification($referral_id, $data);
-                $this->multiReferralPayment($c_referral_id, $c_amount, $order_id);
-            }
-        } else {
-            $data = array(
-                'contact_id' => $referral_id,
-                'date' => waDateTime::date('Y-m-d H:i:s'),
-                'amount' => $amount,
-                'comment' => $comment,
-                'order_id' => $order_id,
-            );
-            $referral_model->insert($data);
-            shopReferralPlugin::sendReferralNotification($referral_id, $data);
-        }
+        shopReferral::multiReferralPayment($referral_id, $amount, $params['order_id']);
     }
 
     public static function sendAdminNotification($payment) {
@@ -252,31 +245,13 @@ class shopReferralPlugin extends shopPlugin {
 
     public function orderActionRefund($params) {
         if ($this->getSettings('status')) {
-            $this->multiReferralRefund($params['order_id']);
+            shopReferral::multiReferralRefund($params['order_id']);
         }
     }
 
-    protected function multiReferralRefund($order_id) {
-        $referral_model = new shopReferralPluginModel();
-        $transactions = $referral_model->getByField('order_id', $order_id, true);
-        foreach ($transactions as $transaction) {
-            $referral_id = $transaction['contact_id'];
-            $amount = (-1) * $transaction['amount'];
-            $comment = 'Возврат. Заказ №' . shopHelper::encodeOrderId($params['order_id']);
-
-            $data = array(
-                'contact_id' => $referral_id,
-                'date' => waDateTime::date('Y-m-d H:i:s'),
-                'amount' => $amount,
-                'comment' => $comment,
-            );
-            $referral_model->insert($data);
-            shopReferralPlugin::sendReferralNotification($referral_id, $comment);
-        }
-    }
-
-    public function getReferralAmount($total) {
-        $referral_percent = $this->getSettings('referral_percent');
+    public static function getReferralAmount($total) {
+        $app_settings_model = new waAppSettingsModel();
+        $referral_percent = $app_settings_model->get(self::$plugin_id, 'referral_percent');
         return $total * $referral_percent / 100.0;
     }
 

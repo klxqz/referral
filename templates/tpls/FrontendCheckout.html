@@ -1,0 +1,25 @@
+{if isset($referral)}
+    <a title="{$frontend_description}" href="{$wa->getUrl('shop/frontend/referralMain')}">{$frontend_name}</a>
+
+    {if isset($promo)}
+        <div class="referral-promo-name">
+            <h2>{$promo.name|escape}</h2>
+        </div>
+        <div class="referral-promo-description">
+            {$promo.description}
+        </div>
+        <div class="referral-promo-img">
+            {if isset($promo.img)}
+                <img src="{$wa_url}wa-data/public/shop/plugins/referral/promos/{$promo.img}"/>
+            {/if}
+        </div>
+        <div class="referral-promo-code">
+            <p>Код для вставки:</p>
+            <textarea cols="100">{$promo.code|escape}</textarea>
+            <p>Купон на скидку: {$promo.ref_coupon}</p>
+        </div>
+    {/if}
+
+{else}
+    Зарегистрируйтесь и вы сможете получить бонусные баллы
+{/if}

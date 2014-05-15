@@ -15,36 +15,20 @@ class shopReferralPluginFrontendReferralMainAction extends shopFrontendAction {
         $referral_id = wa()->getUser()->getId();
         $domain = wa()->getRouting()->getDomain(null, true);
         foreach ($promos as &$promo) {
-            $ref_coupon = $ref_coupon_model->getByField(array('promo_id' => $promo['id'], 'contact_id' => $referral_id));
-            if (!$ref_coupon) {
-                $data = array(
-                    'contact_id' => $referral_id,
-                    'promo_id' => $promo['id'],
-                    'code' => shopReferralPluginCouponsModel::generateCode(),
-                );
-                $ref_coupon_model->insert($data);
-            }
-            $ref_coupon = $ref_coupon_model->getByField(array('promo_id' => $promo['id'], 'contact_id' => $referral_id));
-
-
-            $coupon = $coupon_model->getById($promo['coupon_id']);
-            $url = 'http://' . $domain . wa()->getDataUrl('plugins/referral/promos/' . $promo['img'], true, 'shop');
-            $html = '<a href="' . $promo['url'] . '?referral_id=' . $referral_id . '&coupon_code=' . $ref_coupon['code'] . '"><img src="' . $url . '" /></a>';
-            $promo['code'] = $html;
-
-            $promo['description'] = str_replace('{$referral_id}', $referral_id, $promo['description']);
-            $promo['description'] = str_replace('{$coupon_code}', $ref_coupon['code'], $promo['description']);
-
-            $promo['ref_coupon'] = $ref_coupon['code'];
+            shopReferral::initReferralCoupon($promo,$referral_id);
         }
         unset($promo);
 
 
-        $template_path = wa()->getDataPath('plugins/referral/templates/printform/FrontendDescription.html', false, 'shop', true);
+        $template_path = wa()->getDataPath('plugins/referral/templates/tpls/FrontendDescription.html', false, 'shop', true);
         if (!file_exists($template_path)) {
-            $template_path = wa()->getAppPath('plugins/referral/templates/printform/FrontendDescription.html', 'shop');
+            $template_path = wa()->getAppPath('plugins/referral/templates/tpls/FrontendDescription.html', 'shop');
         }
-
+        
+        $this->view->assign('enable_report', $app_settings_model->get(shopReferralPlugin::$plugin_id, 'enable_report'));
+        $this->view->assign('enable_payments', $app_settings_model->get(shopReferralPlugin::$plugin_id, 'enable_payments'));
+        $this->view->assign('frontend_name', $app_settings_model->get(shopReferralPlugin::$plugin_id, 'frontend_name'));
+        
         $this->view->assign('FrontendDescription', $template_path);
         $this->view->assign('promos', $promos);
         $this->view->assign('breadcrumbs', self::getBreadcrumbs());

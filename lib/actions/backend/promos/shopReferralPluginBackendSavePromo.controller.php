@@ -5,10 +5,7 @@ class shopReferralPluginBackendSavePromoController extends waJsonController {
     public function execute() {
         try {
             $promo_post = waRequest::post('promo');
-            
-            if (!$promo_post['coupon_id']) {
-                 throw new Exception('Ошибка. Купон не задан');
-            }
+
             if (!$promo_post['url']) {
                  throw new Exception('Ошибка. Не указана ссылка');
             }

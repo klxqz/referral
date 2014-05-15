@@ -11,6 +11,12 @@ $app_settings_model->set($plugin_id, 'order_hook', 'complete');
 $app_settings_model->set($plugin_id, 'send_referral_message', '1');
 $app_settings_model->set($plugin_id, 'send_admin_message', '1');
 $app_settings_model->set($plugin_id, 'send_status_message', '1');
+$app_settings_model->set($plugin_id, 'success_message', '1');
+$app_settings_model->set($plugin_id, 'success_promo', '');
+$app_settings_model->set($plugin_id, 'enable_payments', '1');
+$app_settings_model->set($plugin_id, 'enable_report', '1');
+$app_settings_model->set($plugin_id, 'direct_transfer', '');
+
 
 $fields = waContactFields::getAll();
 if (!isset($fields['referral_id'])) {

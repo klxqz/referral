@@ -23,8 +23,8 @@
                 <a href="#/addPromo/{$promo.id}/">{$promo.name|escape}</a>
             </td>
             <td>{$promo.url|escape}</td>
-            <td>{$promo.coupon.code}</td>
-            <td>{$promo.coupon.hint}</td>
+            <td>{if isset($promo.coupon)}{$promo.coupon.code}{else}Без купона{/if}</td>
+            <td>{if isset($promo.coupon)}{$promo.coupon.hint}{else}Без купона{/if}</td>
             <td>{if $promo.enabled}Да{else}Нет{/if}</td>
 
         </tr>

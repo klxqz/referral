@@ -1,31 +1,31 @@
 <div class="sidebar left200px s-inner-sidebar" >
-    
+
     <div class="block">
         <ul class="menu-v with-icons">
-            
+
             <li>
                 <a href="#/">
                     <i class="icon16 folders"></i>Промо материалы
                 </a>
             </li>
-            
+
             <li>
                 <a href="#/referrals">
                     <i class="icon16 user"></i>Рефералы
                 </a>
             </li>
-            
             <li>
                 <a href="#/payments">
                     <i class="icon16 dollar"></i>Выплаты
                 </a>
             </li>
-            
+            {*
             <li>
-                <a href="#/coupons">
-                    <i class="icon16 ss coupon"></i>Купоны на скидку
-                </a>
+            <a href="#/coupons">
+            <i class="icon16 ss coupon"></i>Купоны на скидку
+            </a>
             </li>
+            *}
         </ul>
     </div> 
 </div>
@@ -37,5 +37,6 @@
 
 <script type="text/javascript" src="{$wa_app_static_url}plugins/referral/js/referral.js?{$wa->version()}"></script>
 <script>$(function() {
-    $.referral.init();
-});</script>
+        $.referral.init();
+    });
+</script>

@@ -6,17 +6,14 @@
  */
 class shopReferralPluginBackendReferralAction extends waViewAction {
 
-    private $transfers = array(
-        'webasyst' => 'Партнерская программа(Вебасист)',
-        'wa-bonuses' => 'Плагин "Бонусы за покупку"',
-    );
+    
 
     public function execute() {
         $referral_id = waRequest::get('referral_id', 0);
         $referral_model = new shopReferralPluginModel();
         $referral_transactions = $referral_model->getTransactionList($referral_id);
         $contact = new waContact($referral_id);
-        $this->view->assign('transfers', $this->transfers);
+        $this->view->assign('transfers', shopReferralPlugin::$transfers);
         $this->view->assign('referral_transactions', $referral_transactions);
         $this->view->assign('contact', $contact);
         $this->view->assign('referral_id', $referral_id);

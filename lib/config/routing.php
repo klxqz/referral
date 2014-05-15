@@ -14,13 +14,13 @@ return array(
     'my/referral/report/' => array(
         'module' => 'frontend',
         'plugin' => 'referral',
-        'action' => 'report',
+        'action' => 'referralReport',
         'secure' => true,
     ),
     'my/referral/payments/' => array(
         'module' => 'frontend',
         'plugin' => 'referral',
-        'action' => 'payments',
+        'action' => 'referralPayments',
         'secure' => true,
     ),
     'my/referral/savepayment/' => array(

@@ -23,8 +23,8 @@
                 </select>
             </div>
         </div>
-        
-        
+
+
         <div class="field">
             <div class="name">Название страницы в личном кабинете</div>
             <div class="value">
@@ -52,7 +52,7 @@
             <div class="value">
                 <input type="hidden" name="shop_referral[including_delivery]" value="0" />
                 <input type="checkbox" name="shop_referral[including_delivery]" value="1" {if $settings.including_delivery}checked="checked"{/if}  />
-                       <p class="hint">Расчет начислений рефералу производится с учетом стоимости доставки в заказе.</p>
+                <p class="hint">Расчет начислений рефералу производится с учетом стоимости доставки в заказе.</p>
             </div>
         </div>
 
@@ -72,7 +72,7 @@
             <div class="value">
                 <input type="hidden" name="shop_referral[send_referral_message]" value="0" />
                 <input type="checkbox" name="shop_referral[send_referral_message]" value="1" {if $settings.send_referral_message}checked="checked"{/if}  />
-                       <p class="hint">Отправка Email уведомлений о начисление бонусов рефералу.</p>
+                <p class="hint">Отправка Email уведомлений о начисление бонусов рефералу.</p>
             </div>
         </div>
 
@@ -81,37 +81,94 @@
             <div class="value">
                 <input type="hidden" name="shop_referral[send_admin_message]" value="0" />
                 <input type="checkbox" name="shop_referral[send_admin_message]" value="1" {if $settings.send_admin_message}checked="checked"{/if}  />
-                       <p class="hint">Отправка Email уведомлений администратору о заказе новых выплат.</p>
+                <p class="hint">Отправка Email уведомлений администратору о заказе новых выплат.</p>
             </div>
         </div>
-        
+
         <div class="field">
             <div class="name">Посылать Email уведомления о изменение статуса </div>
             <div class="value">
                 <input type="hidden" name="shop_referral[send_status_message]" value="0" />
                 <input type="checkbox" name="shop_referral[send_status_message]" value="1" {if $settings.send_status_message}checked="checked"{/if}  />
-                       <p class="hint">Отправка Email уведомлений рефералу о изменение статуса выплаты.</p>
+                <p class="hint">Отправка Email уведомлений рефералу о изменение статуса выплаты.</p>
             </div>
         </div>
 
         {foreach $printforms as $key => $printform}
-        <div class="field">
-            <div class="name">{$printform.name}<br /><span class="hint">HTML + Smarty</span></div>
-            <div class="value no-shift">
-                <div id="s-editor-core-wrapper">
-                    <textarea id="sf-template-{$key}" class="body" name="templates[{$key}]">{$printform.content|escape}</textarea>
+            <div class="field">
+                <div class="name">{$printform.name}<br /><span class="hint">HTML + Smarty</span></div>
+                <div class="value no-shift">
+                    <div id="s-editor-core-wrapper">
+                        <textarea id="sf-template-{$key}" class="body" name="templates[{$key}]">{$printform.content|escape}</textarea>
+                    </div>
                 </div>
-            </div>
 
-            {if $printform.change_tpl}
-            <div class="value">
-                <p class="gray"><i class="icon16 exclamation"></i>Внимание! Шаблон по умолчанию был изменен</p>
-                <input type="checkbox" name="reset_tpls[{$key}]" value="1"  /> - Сбросить изменения, использовать шаблон по умолчанию
+                {if $printform.change_tpl}
+                    <div class="value">
+                        <p class="gray"><i class="icon16 exclamation"></i>Внимание! Шаблон по умолчанию был изменен</p>
+                        <input type="checkbox" name="reset_tpls[{$key}]" value="1"  /> - Сбросить изменения, использовать шаблон по умолчанию
+                    </div>
+                {/if}
             </div>
-            {/if}
-        </div>
         {/foreach}
+        <hr>
 
+        <div class="field">
+            <div class="name">Выводить рекламу после оформления заказа</div>
+            <div class="value">
+                <input type="hidden" name="shop_referral[success_message]" value="0" />
+                <input type="checkbox" name="shop_referral[success_message]" value="1" {if $settings.success_message}checked="checked"{/if}  />
+                <p class="hint">После оформления заказа выводится сообщение, в котором может быть купон для привлечения других пользователей и ссылка для перехода на сайт.</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="name">Промо после оформления заказа</div>
+            <div class="value">
+                <select name="shop_referral[success_promo]">
+                    <option value="">Без промо</option>
+                    {foreach $promos as $promo}
+                        <option {if $settings.success_promo == $promo.id}selected="selected"{/if} value="{$promo.id}">{$promo.name}</option>
+                    {/foreach}
+                </select>
+
+                <p class="hint">После оформления заказа выводится промоматериал</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="name">Отчет</div>
+            <div class="value">
+                <input type="hidden" name="shop_referral[enable_report]" value="0" />
+                <input type="checkbox" name="shop_referral[enable_report]" value="1" {if $settings.enable_report}checked="checked"{/if}  />
+                <p class="hint">Раздел «Отчет» в личном кабинете.<br/>Реферал видит отчет по начислениям.</p>
+            </div>
+        </div>
+
+
+        <div class="field">
+            <div class="name">Выплаты</div>
+            <div class="value">
+                <input type="hidden" name="shop_referral[enable_payments]" value="0" />
+                <input type="checkbox" name="shop_referral[enable_payments]" value="1" {if $settings.enable_payments}checked="checked"{/if}  />
+                <p class="hint">Раздел «Выплаты» в личном кабинете.<br/>Реферал может заказать выплату по партнерской программе. Реферал указывает платежные реквизиты для перевод выплаты.</p>
+            </div>
+        </div>
+
+
+
+        <div class="field">
+            <div class="name">Переводить бонусы на другой счет</div>
+            <div class="value">
+                <select name="shop_referral[direct_transfer]">
+                    <option value="">Не переводить</option>
+                    {foreach $transfers as $id => $name}
+                        <option {if $settings.direct_transfer == $id}selected="selected"{/if} value="{$id}">{$name|escape}</option>
+                    {/foreach}
+                </select>
+                <p class="hint">При начисление бонусов, бонусы сразу же переводятся на другой счет</p>
+            </div>
+        </div>
 
         <div class="field">
             <div class="value submit">
@@ -125,8 +182,8 @@
 </div>
 <script type="text/javascript">
     $(function() {
-        var ids = ["sf-template-ReferralMesssage", "sf-template-AdminMesssage","sf-template-StatusMesssage",'sf-template-FrontendDescription'];
-        for (var i = 0; i < ids.length; i++) {
+        var ids = [{foreach $printforms as $key => $printform}"sf-template-{$key}",{/foreach}];
+                for (var i = 0; i < ids.length; i++) {
             var c = CodeMirror.fromTextArea(document.getElementById(ids[i]), {
                 mode: "text/html",
                 tabMode: "indent",

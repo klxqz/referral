@@ -3,9 +3,14 @@
 class shopReferralPluginSettingsAction extends waViewAction {
 
     protected $printforms = array(
+        'FrontendCheckout' => array(
+            'name' => 'Шаблон выводимый после оформления заказа',
+            'path' => 'plugins/referral/templates/tpls/FrontendCheckout.html',
+            'change_tpl' => false,
+        ),
         'FrontendDescription' => array(
             'name' => 'Ваш текст на странице в личном кабинете',
-            'path' => 'plugins/referral/templates/printform/FrontendDescription.html',
+            'path' => 'plugins/referral/templates/tpls/FrontendDescription.html',
             'change_tpl' => false,
         ),
         'ReferralMesssage' => array(
@@ -28,6 +33,7 @@ class shopReferralPluginSettingsAction extends waViewAction {
 
     public function execute() {
         $app_settings_model = new waAppSettingsModel();
+        //$app_settings_model->set($this->plugin_id, 'direct_transfer', '');
         $settings = $app_settings_model->get($this->plugin_id);
         foreach ($this->printforms as &$printform) {
             $template_path = wa()->getDataPath($printform['path'], false, 'shop', true);
@@ -39,6 +45,13 @@ class shopReferralPluginSettingsAction extends waViewAction {
             $printform['content'] = file_get_contents($template_path);
         }
         unset($printform);
+        
+        $promo_model = new shopReferralPluginPromoModel();
+        $promos = $promo_model->getAll();
+        
+
+        $this->view->assign('transfers', shopReferralPlugin::$transfers);
+        $this->view->assign('promos', $promos);
         $this->view->assign('settings', $settings);
         $this->view->assign('printforms', $this->printforms);
     }

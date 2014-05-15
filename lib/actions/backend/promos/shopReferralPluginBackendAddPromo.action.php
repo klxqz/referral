@@ -10,6 +10,7 @@ class shopReferralPluginBackendAddPromoAction extends waViewAction {
         'coupon_id' => '0',
         'enabled' => '1',
         'name' => 'Новый баннер',
+        'description' => '',
         'url' => '',
     );
 

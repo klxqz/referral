@@ -1,10 +1,10 @@
 <?php
 
-class shopReferralPluginFrontendReportAction extends shopFrontendAction {
+class shopReferralPluginFrontendReferralReportAction extends shopFrontendAction {
 
     public function execute() {
         $app_settings_model = new waAppSettingsModel();
-        if (!$app_settings_model->get(shopReferralPlugin::$plugin_id, 'status')) {
+        if (!$app_settings_model->get(shopReferralPlugin::$plugin_id, 'status') || !$app_settings_model->get(shopReferralPlugin::$plugin_id, 'enable_report')) {
             throw new waException(_ws("Page not found"), 404);
         }
         $referral_id = wa()->getUser()->getId();
