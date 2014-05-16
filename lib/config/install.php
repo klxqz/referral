@@ -16,6 +16,7 @@ $app_settings_model->set($plugin_id, 'success_promo', '');
 $app_settings_model->set($plugin_id, 'enable_payments', '1');
 $app_settings_model->set($plugin_id, 'enable_report', '1');
 $app_settings_model->set($plugin_id, 'direct_transfer', '');
+$app_settings_model->set($plugin_id, 'number_levels', '3');
 
 
 $fields = waContactFields::getAll();

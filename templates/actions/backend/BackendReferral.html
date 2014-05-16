@@ -3,6 +3,9 @@
         margin-top: 5px;
         display: inline-block;
     }
+    .location_input{
+        display: none;
+    }
     .amount_input{
         display: none;
     }
@@ -32,66 +35,84 @@
 </style>
 <h2>{$contact.name}</h2>
 {if $referral_transactions}
-<form action="?plugin=referral&action=deleteTransactions" class="transactions-form">
-    {$wa->csrf()}
-    <table id="transactions-list" class="zebra">
-        <tbody><tr class="header">
-                <th class="min-width">
-                    <input type="checkbox" class="select-all-transactions">
-                </th>
-                <th></th>
-                <th>Дата</th>
-                <th>Сумма</th>
-                <th>Комментарий</th>
-            </tr>
-        </tbody>
+    <form action="?plugin=referral&action=deleteTransactions" class="transactions-form">
+        {$wa->csrf()}
+        <table id="transactions-list" class="zebra">
+            <tbody><tr class="header">
+                    <th class="min-width">
+                        <input type="checkbox" class="select-all-transactions">
+                    </th>
+                    <th>&nbsp;</th>
+                    <th>Расположение</th>
+                    <th>Дата</th>
+                    <th>Сумма</th>
+                    <th>Комментарий</th>
+                </tr>
+            </tbody>
 
-        {foreach $referral_transactions as $transaction}
-        <tr data-transaction-id="{$transaction.id}">
-            <td class="min-width">
-                <input class="select-transaction-checkbox" type="checkbox" name="transaction_ids[]" value="{$transaction.id}">
-            </td>
-            <td>
-                <a class="referral_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
-                <a class="referral_but delete" href="#"><i class="icon16 delete"></i>Удалить</a>
-                <i class="icon16 loading"></i>
-                <a class="referral_but save" href="#"><i class="icon16 yes"></i>Сохранить</a>
-                <a class="referral_but cancel" href="#"><i class="icon16 no"></i>Отменить</a>
-            </td>
-            <td>
-                <div class="date_val">{$transaction.date|wa_datetime:"humandatetime"}</div>
-                <input class="date_input" type="text" value="{$transaction.date}"/>
-            </td>
-            <td>
-                <div class="amount_val">{shop_currency_html($transaction.amount)}</div>
-                <input class="amount_input" type="text" value="{shop_currency($transaction.amount,null,null,false)}" >
-            </td>
-            <td>
-                <div class="comment_val">{$transaction.comment|escape}</div>
-                <textarea class="comment_input" cols="40" rows="5">{$transaction.comment|escape}</textarea>
-            </td>
-        </tr>
-        {/foreach}
+            {foreach $referral_transactions as $transaction}
+                <tr data-transaction-id="{$transaction.id}">
+                    <td class="min-width">
+                        <input class="select-transaction-checkbox" type="checkbox" name="transaction_ids[]" value="{$transaction.id}">
+                    </td>
+                    <td>
+                        {if !$transaction.location}
+                            <a class="referral_but edit" href="#"><i class="icon16 edit"></i>Редактировать</a>
+                            <a class="referral_but delete" href="#"><i class="icon16 delete"></i>Удалить</a>
+                            <i class="icon16 loading"></i>
+                            <a class="referral_but save" href="#"><i class="icon16 yes"></i>Сохранить</a>
+                            <a class="referral_but cancel" href="#"><i class="icon16 no"></i>Отменить</a>
+                        {else}
+                            &nbsp;
+                        {/if}
+                    </td>
+                    <td>
+                        {if isset(shopReferralPlugin::$locations[$transaction.location])}
+                        <div class="location_val">{shopReferralPlugin::$locations[$transaction.location]}</div>
+                        <select class="location_input">
+                            <option value="">Отдельный счет(Без перевода)</option>
+                            {foreach shopReferralPlugin::$locations as $key => $name}
+                                <option {if $key == $transaction.location}selected="selected"{/if} value="{$key}">{$name}</option>
+                            {/foreach}
+                        </select>
+                        {else}
+                            <div class="location_val">Отдельный счет(Без перевода)</div>
+                        {/if}
+                    </td>
+                    <td>
+                        <div class="date_val">{$transaction.date|wa_datetime:"humandatetime"}</div>
+                        <input class="date_input" type="text" value="{$transaction.date}"/>
+                    </td>
+                    <td>
+                        <div class="amount_val">{shop_currency_html($transaction.amount)}</div>
+                        <input class="amount_input" type="text" value="{shop_currency($transaction.amount,null,null,false)}" >
+                    </td>
+                    <td>
+                        <div class="comment_val">{$transaction.comment|escape}</div>
+                        <textarea class="comment_input" cols="40" rows="5">{$transaction.comment|escape}</textarea>
+                    </td>
+                </tr>
+            {/foreach}
 
 
-    </table>
-</form>
+        </table>
+    </form>
 
-<div class="block">
-    <a class="add-transaction-but" href="#"><i class="icon16 add"></i>Добавить</a>
-    <a class="delete-transactions-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
-    <a class="transfer-but" href="#"><i class="icon16 sync "></i>Перевести бонусные баллы на другой счет</a>
-    <span class="del-transactions-result"></span>
-</div>
+    <div class="block">
+        <a class="add-transaction-but" href="#"><i class="icon16 add"></i>Добавить</a>
+        <a class="delete-transactions-but" href="#"><i class="icon16 delete"></i>Удалить выбранные</a>
+        <a class="transfer-but" href="#"><i class="icon16 sync "></i>Перевести бонусные баллы на другой счет</a>
+        <span class="del-transactions-result"></span>
+    </div>
 
-<div class="add-transaction">
-    {include file="./include.addTransaction.html"}
-</div>
+    <div class="add-transaction">
+        {include file="./include.addTransaction.html"}
+    </div>
 
-<div class="transfer-container">
-    {include file="./include.transfer.html"}
-</div>
+    <div class="transfer-container">
+        {include file="./include.transfer.html"}
+    </div>
 
 {else}
-Список пуст
+    Список пуст
 {/if}

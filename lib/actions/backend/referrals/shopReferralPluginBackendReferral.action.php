@@ -13,7 +13,7 @@ class shopReferralPluginBackendReferralAction extends waViewAction {
         $referral_model = new shopReferralPluginModel();
         $referral_transactions = $referral_model->getTransactionList($referral_id);
         $contact = new waContact($referral_id);
-        $this->view->assign('transfers', shopReferralPlugin::$transfers);
+        $this->view->assign('transfers', shopReferralPlugin::$locations);
         $this->view->assign('referral_transactions', $referral_transactions);
         $this->view->assign('contact', $contact);
         $this->view->assign('referral_id', $referral_id);

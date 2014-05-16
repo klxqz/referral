@@ -3,7 +3,7 @@
 class shopReferralPlugin extends shopPlugin {
 
     public static $plugin_id = array('shop', 'referral');
-    public static $transfers = array(
+    public static $locations = array(
         'webasyst' => 'Партнерская программа(Вебасист)',
         'wa-bonuses' => 'Плагин "Бонусы за покупку"',
     );
@@ -173,7 +173,7 @@ class shopReferralPlugin extends shopPlugin {
         } else {
             $total = $order['total'] - $order['shipping'];
         }
-        $amount = self::getReferralAmount($total);
+        $amount = shopReferral::getReferralAmount($total);
         $def_currency = wa('shop')->getConfig()->getCurrency(true);
         $amount = shop_currency($amount, $order['currency'], $def_currency, false);
 
@@ -248,11 +248,4 @@ class shopReferralPlugin extends shopPlugin {
             shopReferral::multiReferralRefund($params['order_id']);
         }
     }
-
-    public static function getReferralAmount($total) {
-        $app_settings_model = new waAppSettingsModel();
-        $referral_percent = $app_settings_model->get(self::$plugin_id, 'referral_percent');
-        return $total * $referral_percent / 100.0;
-    }
-
 }

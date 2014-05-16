@@ -33,8 +33,14 @@ class shopReferralPluginSettingsAction extends waViewAction {
 
     public function execute() {
         $app_settings_model = new waAppSettingsModel();
-        //$app_settings_model->set($this->plugin_id, 'direct_transfer', '');
+        //$app_settings_model->set($this->plugin_id, 'number_levels', '3');
         $settings = $app_settings_model->get($this->plugin_id);
+        if (isset($settings['referral_level_percents'])) {
+            $settings['referral_level_percents'] = json_decode($settings['referral_level_percents'], true);
+        } else {
+            $settings['referral_level_percents'] = array();
+        }
+
         foreach ($this->printforms as &$printform) {
             $template_path = wa()->getDataPath($printform['path'], false, 'shop', true);
             if (file_exists($template_path)) {
@@ -45,12 +51,12 @@ class shopReferralPluginSettingsAction extends waViewAction {
             $printform['content'] = file_get_contents($template_path);
         }
         unset($printform);
-        
+
         $promo_model = new shopReferralPluginPromoModel();
         $promos = $promo_model->getAll();
-        
 
-        $this->view->assign('transfers', shopReferralPlugin::$transfers);
+
+        $this->view->assign('transfers', shopReferralPlugin::$locations);
         $this->view->assign('promos', $promos);
         $this->view->assign('settings', $settings);
         $this->view->assign('printforms', $this->printforms);

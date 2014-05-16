@@ -342,6 +342,8 @@
             var _csrf = $('input[name="_csrf"]').val();
             $('#transactions-list .edit').click(function() {
                 var $tr = $(this).closest('tr');
+                //$tr.find('.location_val').hide();
+                //$tr.find('.location_input').show();
                 $tr.find('.date_val').hide();
                 $tr.find('.date_input').show();
                 $tr.find('.comment_val').hide();
@@ -356,6 +358,8 @@
             });
             $('#transactions-list .cancel').click(function() {
                 var $tr = $(this).closest('tr');
+                //$tr.find('.location_val').show();
+                //$tr.find('.location_input').hide();
                 $tr.find('.date_val').show();
                 $tr.find('.date_input').hide();
                 $tr.find('.comment_val').show();
@@ -379,6 +383,7 @@
                     dataType: 'json',
                     data: {
                         id: $tr.attr('data-transaction-id'),
+                        //location: $tr.find('.location_input').val(),
                         amount: $tr.find('.amount_input').val(),
                         comment: $tr.find('.comment_input').val(),
                         date: $tr.find('.date_input').val(),
@@ -386,7 +391,8 @@
                     },
                     success: function(data, textStatus, jqXHR) {
                         if (data.status == 'ok') {
-                            $tr.find('.amount_val').text(data.data.amount);
+                            //$tr.find('.location_val').text($tr.find('.location_input option:selected').text());
+                            $tr.find('.amount_val').html(data.data.amount);
                             $tr.find('.date_val').text(data.data.date);
                             $tr.find('.comment_val').text(data.data.comment);
                             $tr.find('.cancel').click();

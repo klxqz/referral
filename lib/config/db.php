@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Коробов Николай wa-plugins.ru <support@wa-plugins.ru>
+ * @author wa-plugins.ru <support@wa-plugins.ru>
  * @link http://wa-plugins.ru/
  */
 return array(
@@ -21,6 +21,7 @@ return array(
     'shop_referral' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'contact_id' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'location' => array('varchar', 32, 'null' => 0, 'default' => ''),
         'date' => array('datetime', 'null' => 0),
         'amount' => array('decimal', '15,4', 'null' => 0),
         'comment' => array('text'),
@@ -28,6 +29,7 @@ return array(
         ':keys' => array(
             'PRIMARY' => array('id'),
             'contact_id' => 'contact_id',
+            'location' => 'location',
         ),
     ),
     'shop_referral_payments' => array(

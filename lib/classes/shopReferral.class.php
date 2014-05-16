@@ -28,61 +28,126 @@ class shopReferral {
         $promo['ref_coupon'] = $ref_coupon['code'];
     }
 
-    public static function multiReferralPayment($referral_id, $amount, $order_id = null) {
+    public static function multiReferralPayment($referral_id, $amount, $order_id = null, $comment = null, $level = 1) {
         $referral_model = new shopReferralPluginModel();
         $contact = new waContact($referral_id);
         $c_referral_id = $contact->get('referral_id', 'default');
 
-        $comment = '';
-        if ($order_id) {
+        if (!$comment && $order_id) {
             $comment = 'Начисление. Заказ №' . shopHelper::encodeOrderId($order_id);
         }
-
-        if ($c_referral_id) {
-            $c_amount = shopReferralPlugin::getReferralAmount($amount);
+        $app_settings_model = new waAppSettingsModel();
+        $number_levels = $app_settings_model->get(shopReferralPlugin::$plugin_id, 'number_levels');
+        if ($c_referral_id && $level < $number_levels) {
+            $c_amount = shopReferral::getReferralAmount($amount, $level + 1);
             if ($c_amount > 0.01) {
-                $data = array(
-                    'contact_id' => $referral_id,
-                    'date' => waDateTime::date('Y-m-d H:i:s'),
-                    'amount' => $amount - $c_amount,
-                    'comment' => $comment,
-                    'order_id' => $order_id,
-                );
-                $referral_model->insert($data);
-                shopReferralPlugin::sendReferralNotification($referral_id, $data);
-                self::multiReferralPayment($c_referral_id, $c_amount, $order_id);
+                self::multiReferralPayment($c_referral_id, $c_amount, $order_id, $comment, $level + 1);
+                $amount -= $c_amount;
             }
+        }
+        self::referralPayment($referral_id, $amount, $order_id, $comment);
+    }
+
+    public static function referralPayment($referral_id, $amount, $order_id = null, $comment = null) {
+        $app_settings_model = new waAppSettingsModel();
+        $direct_transfer = $app_settings_model->get(shopReferralPlugin::$plugin_id, 'direct_transfer');
+        switch ($direct_transfer) {
+            case 'webasyst':
+                self::webasystTransferPayment($referral_id, $amount, $order_id, $comment);
+                break;
+            case 'wa-bonuses':
+                self::waBonusesTransferPayment($referral_id, $amount);
+                break;
+        }
+
+        $referral_model = new shopReferralPluginModel();
+        $data = array(
+            'contact_id' => $referral_id,
+            'location' => $direct_transfer,
+            'date' => waDateTime::date('Y-m-d H:i:s'),
+            'amount' => $amount,
+            'comment' => $comment,
+            'order_id' => $order_id,
+        );
+        $referral_model->insert($data);
+        shopReferralPlugin::sendReferralNotification($referral_id, $data);
+    }
+
+    public static function webasystTransferPayment($referral_id, $amount, $order_id = null, $comment = null) {
+        $affiliate_model = new shopAffiliateTransactionModel();
+        $affiliate_model->applyBonus($referral_id, $amount, $order_id, $comment);
+    }
+
+    public static function waBonusesTransferPayment($referral_id, $amount) {
+
+        if (!class_exists('shopBonusesPluginModel')) {
+            throw new Exception('Плагин "Бонусы за покупку" не установлен');
+        }
+        $bonus_model = new shopBonusesPluginModel();
+
+        if ($sb = $bonus_model->getByField('contact_id', $referral_id)) {
+            $exist_bonus = $this->getUnburnedBonus($referral_id);
+            $data = array(
+                'date' => waDateTime::date('Y-m-d H:i:s'),
+                'bonus' => $amount + $exist_bonus,
+            );
+            $bonus_model->updateById($sb['id'], $data);
         } else {
             $data = array(
                 'contact_id' => $referral_id,
+                'date' => waDateTime::date('Y-m-d H:i:s'),
+                'bonus' => $amount,
+            );
+            $bonus_model->insert($data);
+        }
+    }
+
+    public static function multiReferralRefund($order_id) {
+        $referral_model = new shopReferralPluginModel();
+        $transactions = $referral_model->getByField('order_id', $order_id, true);
+        foreach ($transactions as $transaction) {
+            $location = $transaction['location'];
+            $referral_id = $transaction['contact_id'];
+            $amount = (-1) * $transaction['amount'];
+            $comment = 'Возврат. Заказ №' . shopHelper::encodeOrderId($order_id);
+
+            switch ($transaction['location']) {
+                case 'webasyst':
+                    self::webasystTransferPayment($referral_id, $amount, $order_id, $comment);
+                    break;
+                case 'wa-bonuses':
+                    self::waBonusesTransferPayment($referral_id, $amount);
+                    break;
+            }
+
+            $data = array(
+                'contact_id' => $referral_id,
+                'location' => $location,
                 'date' => waDateTime::date('Y-m-d H:i:s'),
                 'amount' => $amount,
                 'comment' => $comment,
                 'order_id' => $order_id,
             );
             $referral_model->insert($data);
-            shopReferralPlugin::sendReferralNotification($referral_id, $data);
+            shopReferralPlugin::sendReferralNotification($referral_id, $comment);
         }
     }
-    
-    
 
-    public static function multiReferralRefund($order_id) {
-        $referral_model = new shopReferralPluginModel();
-        $transactions = $referral_model->getByField('order_id', $order_id, true);
-        foreach ($transactions as $transaction) {
-            $referral_id = $transaction['contact_id'];
-            $amount = (-1) * $transaction['amount'];
-            $comment = 'Возврат. Заказ №' . shopHelper::encodeOrderId($params['order_id']);
+    public static function getReferralAmount($total, $level = 1) {
+        $app_settings_model = new waAppSettingsModel();
+        $referral_percent = $app_settings_model->get(shopReferralPlugin::$plugin_id, 'referral_percent');
 
-            $data = array(
-                'contact_id' => $referral_id,
-                'date' => waDateTime::date('Y-m-d H:i:s'),
-                'amount' => $amount,
-                'comment' => $comment,
-            );
-            $referral_model->insert($data);
-            shopReferralPlugin::sendReferralNotification($referral_id, $comment);
+        $referral_level_percents = $app_settings_model->get(shopReferralPlugin::$plugin_id, 'referral_level_percents', null);
+        if ($referral_level_percents) {
+            $referral_level_percents = json_decode($referral_level_percents, true);
+        } else {
+            $referral_level_percents = array();
+        }
+
+        if (isset($referral_level_percents[$level])) {
+            return $total * $referral_level_percents[$level] / 100.0;
+        } else {
+            return $total * $referral_percent / 100.0;
         }
     }
 

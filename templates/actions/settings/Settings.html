@@ -40,7 +40,7 @@
 
 
         <div class="field">
-            <div class="name">Процент начисляемый рефералу</div>
+            <div class="name">Процент начисляемый рефералу(по умолчанию)</div>
             <div class="value">
                 <input type="text" name="shop_referral[referral_percent]" value="{$settings.referral_percent|escape}"  />
                 <p class="hint">Процент от суммы заказа, для начисления на персональный счет реферала, привлекшего клиента.</p>
@@ -169,6 +169,44 @@
                 <p class="hint">При начисление бонусов, бонусы сразу же переводятся на другой счет</p>
             </div>
         </div>
+
+
+
+        <div class="field">
+            <div class="name">Количество уровней в многоуровневой партнерской программе</div>
+            <div class="value">
+                <select name="shop_referral[number_levels]">
+                    {for $i=1 to 10}
+                        <option {if $settings.number_levels == $i}selected="selected"{/if} value="{$i}">{$i}</option>
+                    {/for}
+                </select>
+                <p class="hint">1 - одноуровневая программа, бонусные баллы начисляются одному рефералу. 3-х уровневая программа - бонусные баллы начисляются, трем рефераллам согласно иерархие</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="name">Процент начисляемый рефералу 1-го уровня</div>
+            <div class="value">
+                <input type="text" name="shop_referral[referral_level_percents][1]" value="{if isset($settings.referral_level_percents[1])}{$settings.referral_level_percents[1]}{/if}"  />
+                <p class="hint">Процент от суммы заказа, для начисления на персональный счет реферала, привлекшего клиента.</p>
+            </div>
+        </div>
+        <div class="field">
+            <div class="name">Процент начисляемый рефералу 2-го уровня</div>
+            <div class="value">
+                <input type="text" name="shop_referral[referral_level_percents][2]" value="{if isset($settings.referral_level_percents[2])}{$settings.referral_level_percents[2]}{/if}"  />
+                <p class="hint">Процент от суммы заказа, для начисления на персональный счет реферала, привлекшего клиента.</p>
+            </div>
+        </div>
+        <div class="field">
+            <div class="name">Процент начисляемый рефералу 3-го уровня</div>
+            <div class="value">
+                <input type="text" name="shop_referral[referral_level_percents][3]" value="{if isset($settings.referral_level_percents[3])}{$settings.referral_level_percents[3]}{/if}"  />
+                <p class="hint">Процент от суммы заказа, для начисления на персональный счет реферала, привлекшего клиента.</p>
+            </div>
+        </div>
+
+
 
         <div class="field">
             <div class="value submit">
