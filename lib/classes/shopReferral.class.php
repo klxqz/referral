@@ -144,7 +144,7 @@ class shopReferral {
             $referral_level_percents = array();
         }
 
-        if (isset($referral_level_percents[$level])) {
+        if (isset($referral_level_percents[$level]) && $referral_level_percents[$level]) {
             return $total * $referral_level_percents[$level] / 100.0;
         } else {
             return $total * $referral_percent / 100.0;
