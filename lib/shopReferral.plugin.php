@@ -58,14 +58,14 @@ class shopReferralPlugin extends shopPlugin {
             $ref_coupon_model = new shopReferralPluginCouponsModel();
             $promo = $ref_coupon_model->getShopPromoByCouponCode($coupon_code);
 
-            if ($promo && $promo['enabled']) {
+            if ($promo) {
                 //установка реферала по купону
                 if (($referral_id = $promo['contact_id']) && !$this->getReferralId()) {
                     $this->setReferralId($referral_id);
                 }
 
                 $coupm = new shopCouponModel();
-                if ($promo['coupon_id'] && ($coupon = $coupm->getById($promo['coupon_id']))) {
+                if ($promo['enabled'] && $promo['coupon_id'] && ($coupon = $coupm->getById($promo['coupon_id']))) {
                     $data = wa()->getStorage()->get('shop/checkout', array());
                     $data['coupon_code'] = $coupon['code'];
                     wa()->getStorage()->set('shop/checkout', $data);
@@ -248,4 +248,5 @@ class shopReferralPlugin extends shopPlugin {
             shopReferral::multiReferralRefund($params['order_id']);
         }
     }
+
 }

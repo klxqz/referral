@@ -7,8 +7,11 @@
 class shopReferralPluginBackendSaveSettingsController extends waJsonController {
 
     protected $templates = array(
+        'FrontendCheckout' => array(
+            'tpl_path' => 'plugins/referral/templates/tpls/FrontendCheckout.html',
+        ),
         'FrontendDescription' => array(
-            'tpl_path' => 'plugins/referral/templates/printform/FrontendDescription.html',
+            'tpl_path' => 'plugins/referral/templates/tpls/FrontendDescription.html',
         ),
         'ReferralMesssage' => array(
             'tpl_path' => 'plugins/referral/templates/printform/ReferralMessage.html',

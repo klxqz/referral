@@ -33,9 +33,6 @@ class shopReferral {
         $contact = new waContact($referral_id);
         $c_referral_id = $contact->get('referral_id', 'default');
 
-        if (!$comment && $order_id) {
-            $comment = 'Начисление. Заказ №' . shopHelper::encodeOrderId($order_id);
-        }
         $app_settings_model = new waAppSettingsModel();
         $number_levels = $app_settings_model->get(shopReferralPlugin::$plugin_id, 'number_levels');
         if ($c_referral_id && $level < $number_levels) {
@@ -45,6 +42,20 @@ class shopReferral {
                 $amount -= $c_amount;
             }
         }
+
+        if (!$comment && $order_id) {
+            switch ($level) {
+                case 1:
+                    $comment = 'Бонус за привлеченного друга';
+                    break;
+                case 2:
+                    $comment = 'Бонус за заказ, привлеченный Вашим другом';
+                    break;
+                default:
+                    $comment = 'Начисление. Заказ №' . shopHelper::encodeOrderId($order_id);
+            }
+        }
+
         self::referralPayment($referral_id, $amount, $order_id, $comment);
     }
 
